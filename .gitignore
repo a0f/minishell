@@ -1,0 +1,7 @@
+# Generated using 42 tools, manual changes may be overwritten
+
+# IDE files
+.vscode
+
+# Compiled files
+*.o
