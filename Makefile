@@ -4,12 +4,12 @@
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I./inc -I./ -g
-LDFLAGS = -L./libft -lft -lreadline
+LDFLAGS = -L./libft -lft
 RM = rm -f
 
 ## Files ##
 
-SRCS = src/parser.c
+SRCS = src/env.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
 
 ## Configuration ##
