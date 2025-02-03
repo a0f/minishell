@@ -4,12 +4,12 @@
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I./inc -I./ -g
-LDFLAGS = -L./libft -lft
+LDFLAGS = -L./libft -lft -lreadline -ltermcap
 RM = rm -f
 
 ## Files ##
 
-SRCS = src/env.c
+SRCS = src/env.c src/debug_cmds.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
 
 ## Configuration ##

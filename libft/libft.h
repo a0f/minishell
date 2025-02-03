@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.42.fr>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/10/08 18:59:56 by showard       #+#    #+#                 */
-/*   Updated: 2025/01/21 14:41:31 by showard       ########   odam.nl         */
+/*   Updated: 2025/02/03 16:38:39 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,13 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+typedef struct s_map{
+	struct s_map *next;
+	char *key;
+	char *value;
+} t_map;
+
+
 int			ft_toupper(int c);
 int			ft_isalpha(int c);
 int			ft_isdigit(int c);
@@ -31,7 +38,6 @@ char		*ft_itoa(int n);
 int			ft_isalnum(int c);
 int			ft_isascii(int c);
 int			ft_isprint(int c);
-t_list		*ft_lstnew(void *content);
 char		*ft_strchr(const char *s, int c);
 char		*ft_strrchr(const char *s, int c);
 size_t		ft_strlen(const char *s);
@@ -62,11 +68,18 @@ char		**ft_split(char const *s, char c);
 void		ft_striteri(char *s, void (*f)(unsigned int, char *));
 t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 void		ft_lstiter(t_list *lst, void (*f)(void *));
-t_list		*ft_lstnew(void *content);
 void		ft_lstadd_front(t_list **lst, t_list *new);
-int			ft_lstsize(t_list *lst);
 t_list		*ft_lstlast(t_list *lst);
+t_list		*ft_lstnew(void *content);
 void		ft_lstadd_back(t_list **lst, t_list *new);
 void		ft_write(int fd, const void *buffer, size_t count, ssize_t *fcheck);
+
+t_map		*ft_mapnew(void *key, void *value);
+t_map		*ft_maplast(t_map *lst);
+void		ft_mapadd_back(t_map **lst, t_map *new);
+// void		ft_mapiter(t_list *lst, void (*f)(void *));
+// void		ft_mapadd_front(t_list **lst, t_list *new);
+// int			ft_mapsize(t_list *lst);
+// t_list		*ft_maplast(t_list *lst);
 
 #endif

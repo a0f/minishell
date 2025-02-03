@@ -1,0 +1,30 @@
+==72138== Memcheck, a memory error detector
+==72138== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==72138== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==72138== Command: ./minishell
+==72138== 
+==72138== 
+==72138== Process terminating with default action of signal 2 (SIGINT)
+==72138==    at 0x493C75B: kill (syscall-template.S:120)
+==72138==    by 0x48A7F39: _rl_signal_handler (in /usr/lib/x86_64-linux-gnu/libreadline.so.8.1)
+==72138==    by 0x48A8BEC: rl_getc (in /usr/lib/x86_64-linux-gnu/libreadline.so.8.1)
+==72138==    by 0x48A8460: rl_read_key (in /usr/lib/x86_64-linux-gnu/libreadline.so.8.1)
+==72138==    by 0x488CC86: readline_internal_char (in /usr/lib/x86_64-linux-gnu/libreadline.so.8.1)
+==72138==    by 0x4895D14: readline (in /usr/lib/x86_64-linux-gnu/libreadline.so.8.1)
+==72138==    by 0x401346: main (env.c:80)
+==72138== 
+==72138== HEAP SUMMARY:
+==72138==     in use at exit: 219,219 bytes in 427 blocks
+==72138==   total heap usage: 623 allocs, 196 frees, 233,817 bytes allocated
+==72138== 
+==72138== LEAK SUMMARY:
+==72138==    definitely lost: 0 bytes in 0 blocks
+==72138==    indirectly lost: 0 bytes in 0 blocks
+==72138==      possibly lost: 0 bytes in 0 blocks
+==72138==    still reachable: 219,219 bytes in 427 blocks
+==72138==         suppressed: 0 bytes in 0 blocks
+==72138== Reachable blocks (those to which a pointer was found) are not shown.
+==72138== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==72138== 
+==72138== For lists of detected and suppressed errors, rerun with: -s
+==72138== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

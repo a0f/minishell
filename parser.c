@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 12:36:04 by showard       #+#    #+#                 */
-/*   Updated: 2025/01/23 16:40:24 by showard       ########   odam.nl         */
+/*   Updated: 2025/02/03 13:00:34 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,6 @@ int	main(void)
 			break;
 		parser(head, line);
 		add_history(line);
-		// printf("%s\n", line);
 		free(line);
 	}
 	free(line);
