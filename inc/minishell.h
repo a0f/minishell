@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   minishell.h                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/01/21 15:13:14 by showard       #+#    #+#                 */
-/*   Updated: 2025/02/03 20:28:22 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
+/*   Updated: 2025/02/04 20:13:33 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,13 @@ typedef struct {
 void 		*list_find(bool (*f)(void *));
 void		print_lst(t_list *lst);
 void		print_map(t_map *lst);
+bool 		match_key_str(void *node, void *key);
+bool 		match_key_int(void *node, void *key);
+bool 		match_key_long(void *node, void *key);
+bool 		match_key_size_t(void *node, void *key);
+bool 		match_key_float(void *node, void *key);
+void 		*map_find(t_map *head, bool (*f)(void *, void *), void *key);
+void 		map_remove(t_map **head, bool (*f)(void *, void *), void *key);
+void 		map_free(t_map **head);
 
 #endif

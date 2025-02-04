@@ -9,7 +9,7 @@ RM = rm -f
 
 ## Files ##
 
-SRCS = src/env.c src/debug_cmds.c
+SRCS = src/env.c src/debug_cmds.c src/map.c src/match_key.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
 
 ## Configuration ##
@@ -19,7 +19,7 @@ NAME = minishell
 ## Compilation rules ##
 
 $(NAME): $(OBJS) libft/libft.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<

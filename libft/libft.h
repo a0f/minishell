@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   libft.h                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.42.fr>              +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/10/08 18:59:56 by showard       #+#    #+#                 */
-/*   Updated: 2025/02/03 16:38:39 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   libft.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/08 18:59:56 by showard           #+#    #+#             */
+/*   Updated: 2025/02/04 20:15:36 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ t_list		*ft_lstlast(t_list *lst);
 t_list		*ft_lstnew(void *content);
 void		ft_lstadd_back(t_list **lst, t_list *new);
 void		ft_write(int fd, const void *buffer, size_t count, ssize_t *fcheck);
+int			ft_strcmp(const char *s1, const char *s2);
 
 t_map		*ft_mapnew(void *key, void *value);
 t_map		*ft_maplast(t_map *lst);
