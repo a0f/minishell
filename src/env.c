@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 12:19:29 by showard           #+#    #+#             */
-/*   Updated: 2025/02/04 20:14:54 by showard          ###   ########.fr       */
+/*   Updated: 2025/02/04 21:07:56 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,23 @@ t_map *init_envp(t_map *head, char *envp[])
 // void state_free(t_state *state, void *addr) {
 // 	remove_from_list(find_in_list(state->some_list, addr);
 // }
+
+void *add_mlist(t_list **head, size_t sizeof_data, size_t count)
+{
+	t_list *new_node;
+	
+    void *content = malloc(sizeof_data * count);
+    if (content == NULL)
+        return NULL;
+    new_node = ft_lstnew(content);
+	if (new_node == NULL)
+	{
+		free(content);
+		return (NULL);
+	}
+	ft_lstadd_back(head, new_node);
+    return content;
+}
 
 int	main(int argc, char *argv[], char *envp[])
 {
