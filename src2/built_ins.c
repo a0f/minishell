@@ -1,31 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   built_ins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
-/*   Updated: 2025/02/10 17:29:51 by mwijnsma         ###   ########.fr       */
+/*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
+/*   Updated: 2025/02/10 15:12:00 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include <stdio.h>
+#include <minishell.h>
 
-# include <stddef.h>
-# include <stdbool.h>
-# include <string.h>
-# include <signal.h>
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "libft/libft.h"
-# include "pool.h"
-# include "sb.h"
-# include "tokenize.h"
-# include "parse.h"
-# include "state.h"
+void	error_func(void)
+{
+	printf("handle errors later lol\n");
+}
 
-#endif  // MINISHELL_H
+void	echo(t_state *state, char *str)
+{
+	if (printf("%s", str) == -1)
+		error_func();
+}

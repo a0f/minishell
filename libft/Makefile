@@ -7,7 +7,7 @@ SRCS := ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c\
 	ft_strchr.c ft_strdup.c ft_striteri.c ft_strjoin.c ft_strlcat.c\
 	ft_strlcpy.c ft_strlen.c ft_strmapi.c ft_strncmp.c ft_strnstr.c\
 	ft_strrchr.c ft_strtrim.c ft_substr.c ft_tolower.c ft_toupper.c\
-	ft_write.c \
+	ft_write.c ft_realloc.c\
 	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c\
 	ft_lstiter.c ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c\
 	ft_mapnew.c ft_mapadd_back.c ft_maplast.c ft_strcmp.c ft_lstdelcontent.c\
@@ -19,12 +19,12 @@ OBJS := ft_atoi.o ft_bzero.o ft_calloc.o ft_isalnum.o ft_isalpha.o\
 	ft_strchr.o ft_strdup.o ft_striteri.o ft_strjoin.o ft_strlcat.o\
 	ft_strlcpy.o ft_strlen.o ft_strmapi.o ft_strncmp.o ft_strnstr.o\
 	ft_strrchr.o ft_strtrim.o ft_substr.o ft_tolower.o ft_toupper.o\
-	ft_write.o \
+	ft_write.o ft_realloc.o\
 	ft_lstadd_back.o ft_lstadd_front.o ft_lstclear.o ft_lstdelone.o\
 	ft_lstiter.o ft_lstlast.o ft_lstmap.o ft_lstnew.o ft_lstsize.o\
 	ft_mapnew.o ft_mapadd_back.o ft_maplast.o ft_strcmp.o ft_lstdelcontent.o\
 
-CFLAGS ?= -Wall -Wextra -Werror
+CFLAGS ?= -Wall -Wextra -Werror -g
 
 CC = cc
 

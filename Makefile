@@ -3,13 +3,13 @@
 ## Commands ##
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I./inc -I./ -g
-LDFLAGS = -L./libft -lft -lreadline -ltermcap
+CFLAGS = -Wall -Wextra -Werror -I./inc -g -I./
+LDFLAGS = -L./libft -lft -lreadline
 RM = rm -f
 
 ## Files ##
 
-SRCS = src/env.c src/debug_cmds.c src/map.c src/match_key.c src/built_ins.c
+SRCS = src/main.c src/pool.c src/sb.c src/state.c src/tokenize.c src/pool_utils.c src/parse.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
 
 ## Configuration ##

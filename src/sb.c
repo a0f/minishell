@@ -1,37 +1,59 @@
-#include "sb.h"
-#include "libft.h"
-#include <string.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sb.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 15:14:29 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/02/10 15:34:50 by mwijnsma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-t_sb *sb_new(t_pool *pool) {
-    t_sb *sb = pool_calloc(pool, sizeof(t_sb));
-    sb->pool = pool;
-    sb->data = pool_calloc(pool, 1);
-    sb->length = 0;
-    sb->capacity = 1;
-    return sb;
+#include "minishell.h"
+
+t_sb	*sb_new(t_pool *pool)
+{
+	t_sb	*sb;
+
+	sb = pool_calloc(pool, sizeof(t_sb));
+	if (!sb)
+	{
+		return (NULL);
+	}
+	sb->pool = pool;
+	sb->data = pool_calloc(pool, 1);
+	if (!sb->data)
+	{
+		return (NULL);
+	}
+	sb->count = 0;
+	sb->capacity = 1;
+	return (sb);
 }
 
-void sb_free(t_sb *sb) {
-    pool_dealloc(sb->pool, sb->data);
-    pool_dealloc(sb->pool, sb);
+bool	sb_append(t_sb *sb, const char *str)
+{
+	size_t	len;
+
+	len = strlen(str);
+	sb->capacity += len;
+	sb->data = pool_realloc(sb->pool, sb->data, sb->count, sb->capacity);
+	if (!sb->data)
+	{
+		sb->capacity -= len;
+		return (false);
+	}
+	ft_memcpy(sb->data + sb->count, str, len + 1);
+	sb->count += len;
+	return (true);
 }
 
-// todo: put malloc checks in the append functions
-void sb_append(t_sb *sb, const char *str) {
-    size_t len = strlen(str);
-    sb->capacity += len;
-    sb->data = pool_realloc(sb->pool, sb->data, sb->capacity);
-    ft_memcpy(sb->data + sb->length, str, len + 1);
-    sb->length += len;
-}
+bool	sb_append_char(t_sb *sb, char c)
+{
+	char	str[2];
 
-void sb_append_char(t_sb *sb, char c) {
-    char str[2] = {c, 0};
-    sb_append(sb, str);
-}
-
-char *sb_build(t_sb *sb) {
-    char *data = sb->data;
-    pool_dealloc(sb->pool, sb);
-    return data;
+	str[0] = c;
+	str[1] = '\0';
+	return (sb_append(sb, str));
 }

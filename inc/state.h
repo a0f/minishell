@@ -1,31 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sb.h                                               :+:      :+:    :+:   */
+/*   state.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:30:36 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 15:34:26 by mwijnsma         ###   ########.fr       */
+/*   Created: 2025/02/10 15:39:12 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/02/10 18:35:16 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SB_H
-# define SB_H
+#ifndef STATE_H
+# define STATE_H
 
 # include "minishell.h"
 
-typedef struct s_sb
+typedef struct s_state
 {
-	char	*data;
-	size_t	count;
-	size_t	capacity;
-	t_pool	*pool;
-}	t_sb;
+	t_pool	*program_pool;
+	t_pool	*parser_pool;
+	t_map	*env;
+	pid_t	running_command;
+	int		last_exit_code;
+}	t_state;
 
-t_sb	*sb_new(t_pool *pool);
+t_state	*state_new(void);
+void	state_free(t_state *state);
+void	state_exit(t_state *state, int code);
 
-bool	sb_append(t_sb *sb, const char *str);
-bool	sb_append_char(t_sb *sb, char c);
+void	state_run_string(t_state *state, char *line);
+void	state_run_cmd(t_state *state, t_cmd *cmd);
 
-#endif  // SB_H
+#endif  // STATE_H

@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
-/*   Updated: 2025/02/10 17:29:51 by mwijnsma         ###   ########.fr       */
+/*   Created: 2024/07/16 14:12:16 by a0f               #+#    #+#             */
+/*   Updated: 2025/02/10 15:37:02 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include <stddef.h>
-# include <stdbool.h>
-# include <string.h>
-# include <signal.h>
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "libft/libft.h"
-# include "pool.h"
-# include "sb.h"
-# include "tokenize.h"
-# include "parse.h"
-# include "state.h"
+// void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
+{
+	void	*new_ptr;
 
-#endif  // MINISHELL_H
+	new_ptr = malloc(new_size);
+	if (!new_ptr)
+	{
+		return (NULL);
+	}
+	ft_memcpy(new_ptr, ptr, old_size);
+	free(ptr);
+	return (new_ptr);
+}

@@ -3,18 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:59:56 by showard           #+#    #+#             */
-/*   Updated: 2025/02/04 21:04:31 by showard          ###   ########.fr       */
+/*   Updated: 2025/02/10 15:37:27 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
+
 # include <stddef.h>
 # include <stdint.h>
 # include <unistd.h>
+# include <stdlib.h>
 
 typedef struct s_list
 {
@@ -22,12 +24,12 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-typedef struct s_map{
-	struct s_map *next;
-	char *key;
-	char *value;
-} t_map;
-
+typedef struct s_map
+{
+	struct s_map	*next;
+	char			*key;
+	char			*value;
+}	t_map;
 
 int			ft_toupper(int c);
 int			ft_isalpha(int c);
@@ -60,6 +62,7 @@ size_t		ft_strlcpy(char *dst, const char *src, size_t size);
 size_t		ft_strlcat(char *dst, const char *src, size_t size);
 int			ft_atoi(const char *str);
 void		*ft_calloc(size_t count, size_t size);
+void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char		*ft_strdup(const char *s1);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
 char		*ft_strjoin(char const *s1, char const *s2);
@@ -74,7 +77,6 @@ t_list		*ft_lstnew(void *content);
 void		ft_lstadd_back(t_list **lst, t_list *new);
 void		ft_write(int fd, const void *buffer, size_t count, ssize_t *fcheck);
 int			ft_strcmp(const char *s1, const char *s2);
-void 		ft_lstdelcontent(void *content);
 
 t_map		*ft_mapnew(void *key, void *value);
 t_map		*ft_maplast(t_map *lst);

@@ -1,31 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   tokenize.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
-/*   Updated: 2025/02/10 17:29:51 by mwijnsma         ###   ########.fr       */
+/*   Created: 2025/02/10 16:08:45 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/02/10 17:03:30 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef TOKENIZE_H
+# define TOKENIZE_H
 
-# include <stddef.h>
-# include <stdbool.h>
-# include <string.h>
-# include <signal.h>
-# include <sys/types.h>
-# include <sys/wait.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "libft/libft.h"
-# include "pool.h"
-# include "sb.h"
-# include "tokenize.h"
-# include "parse.h"
-# include "state.h"
+# include "minishell.h"
 
-#endif  // MINISHELL_H
+typedef enum s_token_type
+{
+	TOKEN_WORD,
+	TOKEN_PIPE,
+	TOKEN_LT,
+	TOKEN_GT,
+	TOKEN_LTLT,
+	TOKEN_GTGT,
+}	t_token_type;
+
+typedef struct s_token
+{
+	t_token_type	type;
+	char			*value;
+	struct s_token	*next;
+}	t_tokens;
+
+t_tokens	*tokenize(t_pool *pool, char *cmd);
+
+#endif  // TOKENIZE_H
