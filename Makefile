@@ -9,7 +9,7 @@ RM = rm -f
 
 ## Files ##
 
-SRCS = src/env.c src/debug_cmds.c src/map.c src/match_key.c
+SRCS = src/env.c src/debug_cmds.c src/map.c src/match_key.c src/built_ins.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
 
 ## Configuration ##

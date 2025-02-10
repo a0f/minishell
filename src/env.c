@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 12:19:29 by showard           #+#    #+#             */
-/*   Updated: 2025/02/04 21:07:56 by showard          ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   env.c                                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: showard <showard@student.42.fr>              +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/01/27 12:19:29 by showard       #+#    #+#                 */
+/*   Updated: 2025/02/10 14:15:04 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,14 +115,15 @@ int	main(int argc, char *argv[], char *envp[])
     {
         printf("Node not found\n");
     }
-	while (1)
-	{
-		state->last_line = readline("test> ");
-		if (state->last_line == NULL)
-			break;
-		add_history(state->last_line);
-		free(state->last_line);
-	}
+	// while (1)
+	// {
+	// 	state->last_line = readline("test> ");
+	// 	if (state->last_line == NULL)
+	// 		break;
+	// 	add_history(state->last_line);
+	// 	free(state->last_line);
+	// }
+	echo(state, )
 	free(state->last_line);
 	rl_clear_history();
 	// free_and_exit(state);
