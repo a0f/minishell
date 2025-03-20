@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   parse.h                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 16:06:42 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/02/25 13:22:29 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   parse.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 16:06:42 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/03/20 12:45:22 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct s_cmd
 	t_input_file	*in_files;
 	t_output_file	*out_files;
 	struct s_cmd	*pipe_into;
+	int				fds[2];
 }	t_cmd;
 
 t_cmd	*parse(t_pool *pool, t_tokens *tokens);
