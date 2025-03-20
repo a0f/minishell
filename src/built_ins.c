@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
-/*   Updated: 2025/03/20 11:59:50 by showard       ########   odam.nl         */
+/*   Updated: 2025/03/20 12:15:20 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,16 +110,20 @@ void	exit_ms(t_state *state, char *argv[])
 	i = 0;
 	if (argv[1] == NULL)
 		(state_free(state), exit(0));
-	else if (argv[1] != NULL && argv[2] != NULL)
-	{
-		printf("exit\nminishell: exit: too many arguments\n");
-		return ;
-	}
 	while(argv[1][i] != '\0')
 	{
 		if (ft_isdigit(argv[1][i]) == 0)
-			(state_free(state), exit(1));
+		{
+			printf("exit\nminishell: exit: %s: numeric argument required\n", argv[1]);
+			(state_free(state), exit(2));
+		}
 		i++;
+	}
+	if (argv[2] != NULL)
+	{
+		printf("exit\nminishell: exit: too many arguments\n");
+		state->last_exit_code = 1;
+		return ;
 	}
 	exit_status = ft_atoi(argv[1]);
 	if (exit_status < 0 || exit_status > 255)
