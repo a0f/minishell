@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenize.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 17:06:25 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   tokenize.c                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/02/11 16:38:44 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,11 +167,14 @@ char	*tokenize_single(t_pool *pool, t_tokens **tokens, char *cmd)
 		return (tokenize_word(pool, tokens, cmd));
 }
 
-char *preprocess(t_pool *pool, char *cmd) {
+char	*preprocess(t_pool *pool, char *cmd)
+{
 	bool	in_single;
 	bool	in_double;
 	t_sb	*out;
 	size_t	i;
+	t_sb	*var_sb;
+	char	*var_value;
 
 	in_single = false;
 	in_double = false;
@@ -196,13 +199,13 @@ char *preprocess(t_pool *pool, char *cmd) {
 		if (cmd[i] == '$' && !in_single)
 		{
 			i++;
-			t_sb *var_sb = sb_new(pool);
+			var_sb = sb_new(pool);
 			while (cmd[i] && cmd[i] != '\'' && cmd[i] != '"' && cmd[i] != ' ')
 			{
 				sb_append_char(var_sb, cmd[i]);
 				i++;
 			}
-			char *var_value = getenv(var_sb->data);
+			var_value = getenv(var_sb->data);
 			if (var_value)
 				sb_append(out, var_value);
 		}
@@ -222,7 +225,9 @@ char *preprocess(t_pool *pool, char *cmd) {
 
 t_tokens	*tokenize(t_pool *pool, char *cmd)
 {
-	t_tokens *tokens = NULL;
+	t_tokens	*tokens;
+
+	tokens = NULL;
 	cmd = preprocess(pool, cmd);
 	if (!cmd)
 		return (NULL);

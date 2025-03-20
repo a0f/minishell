@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parse.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:06:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 17:03:20 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   parse.h                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:06:42 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/02/25 13:22:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct s_output_file
 {
 	t_output_type			type;
 	char					*path;
-	struct s_output_file	*next;
+	struct s_output_file	*next; 
 }	t_output_file;
 
 typedef struct s_cmd

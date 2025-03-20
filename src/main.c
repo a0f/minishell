@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 14:19:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 18:23:00 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   main.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 14:19:42 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/02/28 15:47:59 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int argc, char *argv[], char **envp)
 {
 	t_state	*state;
 	char	*line;
 	char	*parser_line;
 
+	(void)argc;
+	(void)argv;
 	signal(SIGQUIT, SIG_IGN);
 	state = state_new();
+	state->env = init_envp(state->env, envp);
 	if (!state)
 		return (1);
 	while (true)

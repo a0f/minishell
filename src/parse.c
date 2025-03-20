@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:18:37 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 17:56:27 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   parse.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:18:37 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/02/28 16:06:09 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ t_cmd *parse(t_pool *pool, t_tokens *tokens) {
 				if (!cmd->program) {
 					return (NULL);
 				}
+				if (!cmd_append_arg(pool, cmd, pool_strdup(pool, tokens->value)))
+					return (NULL);
 			} else {
 				if (!cmd_append_arg(pool, cmd, pool_strdup(pool, tokens->value))) {
 					return (NULL);
