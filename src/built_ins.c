@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   built_ins.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
-/*   Updated: 2025/03/20 12:15:20 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   built_ins.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
+/*   Updated: 2025/03/20 12:21:56 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,29 +23,22 @@ void	error_func(void)
 
 void	echo(t_state *state, char *args[])
 {
-	t_state	*statelol;
-	int		i;
+	bool	print_newline;
 
-	statelol = state;
-	if (ft_strcmp("-n", args[0]) == 0)
+	print_newline = false;
+	if (ft_strcmp("-n", *args) == 0)
 	{
-		i = 1;
-		while (args[i] != NULL)
-		{
-			printf("%s", args[i]);
-			i++;
-		}
+		print_newline = true;
+		args++;
 	}
-	else
+	while (*args != NULL)
 	{
-		i = 0;
-		while (args[i] != NULL)
-		{
-			printf("%s", args[i]);
-			i++;
-		}
+		printf("%s", *args);
+		args++;
+	}
+	if (print_newline)
 		printf("\n");
-	}
+	state->last_exit_code = 0;
 }
 
 void	pwd(t_state *state)

@@ -23,6 +23,7 @@ $(NAME): $(OBJS) libft/libft.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 obj/%.o: src/%.c
+	mkdir -p obj
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 ## Cleaning rules ##
