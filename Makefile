@@ -3,7 +3,7 @@
 ## Commands ##
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I./inc -I./ -g -fsanitize=address,undefined
+CFLAGS = -Wall -Wextra -Werror -I./inc -I./ -g
 LDFLAGS = -L./libft -lft -lreadline -ltermcap
 RM = rm -f
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   parse.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 16:18:37 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/02/28 16:06:09 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 16:18:37 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/03/20 13:02:19 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,8 @@ t_cmd *parse(t_pool *pool, t_tokens *tokens) {
 
 void cmd_dump(t_cmd *cmd) {
 	printf("program: %s\n", cmd->program);
+	printf("input fd: %d\n", cmd->fds[0]);
+	printf("output fd: %d\n", cmd->fds[1]);
 	printf("args: [");
 	for (size_t i = 0; cmd->args[i]; i++) {
 		printf("%s, ", cmd->args[i]);
@@ -201,7 +203,7 @@ void cmd_dump(t_cmd *cmd) {
 		printf("]\n");
 	}
 	if (cmd->pipe_into) {
-		printf("pipe into\n");
+		printf("-- pipe into --\n");
 		cmd_dump(cmd->pipe_into);
 	}
 }

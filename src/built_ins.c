@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/03/20 12:21:56 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:10:03 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@ void	echo(t_state *state, char *args[])
 {
 	bool	print_newline;
 
-	print_newline = false;
-	if (ft_strcmp("-n", *args) == 0)
+	print_newline = true;
+	if (*args && ft_strcmp("-n", *args) == 0)
 	{
-		print_newline = true;
+		print_newline = false;
 		args++;
 	}
 	while (*args != NULL)
