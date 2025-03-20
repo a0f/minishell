@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:06:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/03/20 12:45:22 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/03/20 12:47:17 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct s_cmd
 	t_output_file	*out_files;
 	struct s_cmd	*pipe_into;
 	int				fds[2];
+	pid_t			pid;
 }	t_cmd;
 
 t_cmd	*parse(t_pool *pool, t_tokens *tokens);
