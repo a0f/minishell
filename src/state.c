@@ -6,15 +6,15 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/03/20 18:47:35 by showard       ########   odam.nl         */
+/*   Updated: 2025/03/21 17:00:46 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 t_state	*state_new(void)
 {
@@ -151,8 +151,8 @@ char	*find_valid_path(char **paths, char *cmd)
 pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 {
 	pid_t	pid;
-	t_map 	*path_node;
-	char 	**paths;
+	t_map	*path_node;
+	char	**paths;
 
 	pid = fork();
 	if (pid == -1)
@@ -214,24 +214,24 @@ char	*ft_strjoin_path(char const *s1, char const *s2)
 	return (str);
 }
 
-char **convert_env(t_map *state_env)
+char	**convert_env(t_map *state_env)
 {
-	t_map *current;
-	int	lst_size;
-	char **env;
-	int i;
+	t_map	*current;
+	int		lst_size;
+	char	**env;
+	int		i;
 
 	i = 0;
 	lst_size = ft_mapsize(state_env);
 	env = ft_calloc(lst_size, (sizeof(char *)));
 	if (env == NULL)
-		return (NULL); //error later
+		return (NULL); // error later
 	current = state_env;
 	while (current->next != NULL)
 	{
 		env[i] = ft_strjoin_path(current->key, current->value);
 		if (env[i] == NULL)
-			return (NULL); //error later
+			return (NULL); // error later
 		i++;
 		current = current->next;
 	}
@@ -239,7 +239,6 @@ char **convert_env(t_map *state_env)
 	i = 0;
 	return (env);
 }
-
 
 int	find_builtin(t_state *state, t_cmd *cmd)
 {
@@ -263,20 +262,18 @@ int	find_builtin(t_state *state, t_cmd *cmd)
 #define READ_END 0
 #define WRITE_END 1
 
-
 void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 {
-	t_cmd *temp_cmd;
-	
+	t_cmd	*temp_cmd;
+
 	temp_cmd = cmd;
 	while (temp_cmd)
 	{
 		if (temp_cmd == cmd)
 		{
 			temp_cmd = temp_cmd->pipe_into;
-			continue;
+			continue ;
 		}
-
 		if (pipe(temp_cmd->pipe) == -1)
 		{
 			state_free(state);
@@ -286,117 +283,135 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 	}
 }
 
-
-void	state_run_cmd(t_state *state, t_cmd *cmd)
+void	process_infile(t_cmd *cmd)
 {
-	t_cmd			*temp_cmd;
-	t_cmd			*prev_cmd;
 	t_input_file	*temp_in_file;
+	int				fd;
+
+	temp_in_file = cmd->in_files;
+	while (temp_in_file)
+	{
+		fd = open(temp_in_file->value.path, O_RDONLY);
+			// todo: error check and handle heredocs
+		close(cmd->fds[READ_END]);
+		cmd->fds[READ_END] = fd;
+		temp_in_file = temp_in_file->next;
+	}
+}
+
+void	process_outfile(t_cmd *cmd)
+{
 	t_output_file	*temp_out_file;
 	int				fd;
-	int				original_stdout;
-	int				original_stdin;
+	int				flags;
 
-	original_stdout = dup(STDOUT_FILENO);
-	original_stdin = dup(STDIN_FILENO);
-	
+	temp_out_file = cmd->out_files;
+	while (temp_out_file)
+	{
+		flags = O_WRONLY | O_CREAT;
+		if (temp_out_file->type == OUTPUT_TRUNCATE)
+			flags |= O_TRUNC;
+		else
+			flags |= O_APPEND;
+		fd = open(temp_out_file->path, flags, 0777); // todo: error check
+		close(cmd->fds[WRITE_END]);
+		cmd->fds[WRITE_END] = fd;
+		temp_out_file = temp_out_file->next;
+	}
+}
 
-	create_cmd_pipes(state, cmd);
+void	get_previous_input(t_cmd *prev_cmd, t_cmd *cmd)
+{
+	if (prev_cmd->out_files == NULL)
+		cmd->fds[READ_END] = cmd->pipe[READ_END];
+	else
+		cmd->fds[READ_END] = dup(STDIN_FILENO);
+}
+
+void	put_next_output(t_cmd *cmd)
+{
+	if (cmd->pipe_into->in_files == NULL)
+		cmd->fds[WRITE_END] = cmd->pipe_into->pipe[WRITE_END];
+	else
+		cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
+}
+
+void	set_pipes(t_cmd *cmd)
+{
+	t_cmd	*temp_cmd;
+	t_cmd	*prev_cmd;
+
 	temp_cmd = cmd;
 	prev_cmd = NULL;
 	while (temp_cmd)
 	{
 		if (temp_cmd == cmd)
-		{
 			temp_cmd->fds[READ_END] = dup(STDIN_FILENO);
-		}
 		// if not first command, get input from previous command
 		else
-		{
-			if (prev_cmd->out_files == NULL)
-				temp_cmd->fds[READ_END] = temp_cmd->pipe[READ_END];
-			else
-			{
-				temp_cmd->fds[READ_END] = dup(STDIN_FILENO);
-			}
-		}
+			get_previous_input(prev_cmd, temp_cmd);
 		// write output to stdout if last command
 		if (!temp_cmd->pipe_into)
-		{
 			temp_cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
-		}
 		// if not last command, write output to next command
 		else
-		{
-			if (temp_cmd->pipe_into->in_files == NULL)
-			{
-				temp_cmd->fds[WRITE_END] = temp_cmd->pipe_into->pipe[WRITE_END];
-			}
-			else
-			{
-				temp_cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
-			}
-		}
-		temp_in_file = temp_cmd->in_files;
-		while (temp_in_file)
-		{
-		 	fd = open(temp_in_file->value.path, O_RDONLY);  // todo: error check and handle heredocs
-			close(temp_cmd->fds[READ_END]);
-			temp_cmd->fds[READ_END] = fd;
-			temp_in_file = temp_in_file->next;
-		}
-		temp_out_file = temp_cmd->out_files;
-		while (temp_out_file)
-		{
-			int flags = O_WRONLY | O_CREAT;
-			if (temp_out_file->type == OUTPUT_TRUNCATE) {
-				flags |= O_TRUNC;
-			} else {
-				flags |= O_APPEND;
-			}
-			fd = open(temp_out_file->path, flags, 0777);  // todo: error check
-			close(temp_cmd->fds[WRITE_END]);
-			temp_cmd->fds[WRITE_END] = fd;
-			temp_out_file = temp_out_file->next;
-		}
+			put_next_output(temp_cmd);
+		process_infile(temp_cmd);
+		process_outfile(temp_cmd);
 		prev_cmd = temp_cmd;
 		temp_cmd = temp_cmd->pipe_into;
 	}
-	signal(SIGINT, SIG_IGN);
+}
 
+void	restore_stds(int *original_stdin, int *original_stdout)
+{
+	dup2(*original_stdout, STDOUT_FILENO);
+	close(*original_stdout);
+	dup2(*original_stdin, STDIN_FILENO);
+	close(*original_stdin);
+}
+
+void	link_cmd(t_cmd *cmd)
+{
+	if (dup2(cmd->fds[READ_END], STDIN_FILENO) == -1)
+	{
+		fprintf(stderr, "dup2 error\n");
+		exit(1);
+	}
+	close(cmd->fds[READ_END]);
+	if (dup2(cmd->fds[WRITE_END], STDOUT_FILENO) == -1)
+	{
+		fprintf(stderr, "dup2 error\n");
+		exit(1);
+	}
+	close(cmd->fds[WRITE_END]);
+}
+
+void	state_run_cmd(t_state *state, t_cmd *cmd)
+{
+	t_cmd	*temp_cmd;
+	char	**envp;
+	int		original_stdin;
+	int		original_stdout;
+
+	original_stdout = dup(STDOUT_FILENO);
+	original_stdin = dup(STDIN_FILENO);
+	create_cmd_pipes(state, cmd);
+	set_pipes(cmd);
+	signal(SIGINT, SIG_IGN);
 	temp_cmd = cmd;
 	while (temp_cmd)
 	{
-		if (dup2(temp_cmd->fds[READ_END], STDIN_FILENO) == -1) {
-			fprintf(stderr, "dup2 error\n");
-			exit(1);
-		}
-		close(temp_cmd->fds[READ_END]);
-		if (dup2(temp_cmd->fds[WRITE_END], STDOUT_FILENO) == -1) {
-			fprintf(stderr, "dup2 error\n");
-			exit(1);
-		}
-		close(temp_cmd->fds[WRITE_END]);
-
-		char 	**envp;
-
+		link_cmd(temp_cmd);
 		envp = convert_env(state->env);
 		if (!find_builtin(state, temp_cmd))
-		{
-			temp_cmd->pid = state_execve(state, temp_cmd->program, temp_cmd->args, envp);
-		}
-		if (!temp_cmd->pipe_into) {
-			break;
-		}
+			temp_cmd->pid = state_execve(state, temp_cmd->program,
+					temp_cmd->args, envp);
+		if (!temp_cmd->pipe_into)
+			break ;
 		temp_cmd = temp_cmd->pipe_into;
 	}
 	state->last_exit_code = get_exit_status(temp_cmd->pid);
-
 	signal(SIGINT, sigint_interactive);
-
-	// restore stdout and stdin
-	dup2(original_stdout, STDOUT_FILENO);
-	close(original_stdout);
-	dup2(original_stdin, STDIN_FILENO);
-	close(original_stdin);
+	restore_stds(&original_stdin, &original_stdout);
 }

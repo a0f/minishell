@@ -1,0 +1,12 @@
+Makefile
+__pycache__
+inc
+lel.txt
+libft
+lol.txt
+minishell
+obj
+parser.c
+src
+stupid.c
+tokenize.py
