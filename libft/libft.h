@@ -1,17 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/08 18:59:56 by showard           #+#    #+#             */
-/*   Updated: 2025/02/10 15:37:27 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   libft.h                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/10/08 18:59:56 by showard       #+#    #+#                 */
+/*   Updated: 2025/03/27 14:35:39 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1000
+# endif
+# if BUFFER_SIZE <= 0
+#  error BUFFER_SIZE needs to be bigger than 0. Try again nerd.
+# endif
 
 # include <stddef.h>
 # include <stdint.h>
@@ -31,6 +37,15 @@ typedef struct s_map
 	char			*value;
 }	t_map;
 
+char		*get_next_line(int fd);
+size_t		ft_strlen_gnl(const char *s);
+char		*ft_strdup_gnl(const char *s);
+char		*ft_strjoin_gnl(char const *s1, char const *s2);
+char		*ft_substr_gnl(char const *s, unsigned int start, size_t len);
+char		*ft_strchr_gnl(const char *s, int c);
+void		clean_lines(char *remainder, char **full_line, char **r_line);
+void		complete_line(char *buffer, char **full_line, int fd);
+char		*ft_strcpy_gnl(char *dest, const char *src);
 int			ft_toupper(int c);
 int			ft_isalpha(int c);
 int			ft_isdigit(int c);

@@ -1,0 +1,13 @@
+hey.txt$
+inc$
+lel.txt$
+libft$
+lol.txt$
+Makefile$
+minishell$
+obj$
+parser.c$
+__pycache__$
+src$
+stupid.c$
+tokenize.py$

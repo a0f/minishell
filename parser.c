@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 12:36:04 by showard       #+#    #+#                 */
-/*   Updated: 2025/02/03 13:00:34 by showard       ########   odam.nl         */
+/*   Updated: 2025/03/27 15:22:40 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,20 +120,7 @@ stdout = "h2.txt"
 stdin = "h3.txt"
 cmd += "-e"
 
-
-
-< ahello.txt cat > h1.txt > h2.txt < h3.txt -e
-cmd = ""
-dup2("ahello.txt", STDIN_FILENO)
-cmd += "cat"
-dup2("h1.txt", STDOUT_FILENO)
-dup2("h2.txt", STDOUT_FILENO)
-dup2("h3.txt", STDIN_FILENO)
-cmd += "-e"
-
-
-
-grep -i 'error' < /var/log/syslog | awk '{print $1, $2, $3, $5}' | sort | uniq > /tmp/error_report.txt
+parsesort | uniq > /tmp/error_report.txt
 
 grep -i 'error' < /var/log/syslog
 ReadFile(Word("/var/log/syslog"), Command("grep -i 'error'"))

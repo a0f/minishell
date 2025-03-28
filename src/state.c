@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/03/21 17:00:46 by showard       ########   odam.nl         */
+/*   Updated: 2025/03/27 16:31:54 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,20 +283,78 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 	}
 }
 
+#include <stdio.h>
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+
+void	input_heredoc(char *delimeter, int fd)
+{
+    int		lim_len;
+    char	*gnl_r;
+    int		len;
+
+    lim_len = ft_strlen(delimeter);
+    while (1)
+    {
+        write(1, "> ", 2);
+        gnl_r = get_next_line(0);
+        if (gnl_r == NULL || (ft_strncmp(delimeter, gnl_r, lim_len) == 0
+                && ft_strlen(delimeter) == ft_strlen(gnl_r) - 1))
+        {
+            free(gnl_r);
+            break;
+        }
+        len = ft_strlen(gnl_r);
+        if (write(fd, gnl_r, len) == -1)
+        {
+            close(fd);
+            free(gnl_r);
+            perror("write");
+            exit(1);
+        }
+        free(gnl_r);
+    }
+    // put file pointer back at start to read
+    lseek(fd, 0, SEEK_SET);
+}
+
 void	process_infile(t_cmd *cmd)
 {
-	t_input_file	*temp_in_file;
-	int				fd;
-
-	temp_in_file = cmd->in_files;
-	while (temp_in_file)
-	{
-		fd = open(temp_in_file->value.path, O_RDONLY);
-			// todo: error check and handle heredocs
-		close(cmd->fds[READ_END]);
-		cmd->fds[READ_END] = fd;
-		temp_in_file = temp_in_file->next;
-	}
+    t_input_file	*temp_in_file;
+	int 		fd;
+	
+    temp_in_file = cmd->in_files;
+    while (temp_in_file)
+    {
+        if (temp_in_file->type == INPUT_HEREDOC)
+        {
+			fd = open(".tmp_heredoc", O_CREAT | O_RDWR | O_TRUNC, 0744);
+            if (fd == -1)
+            {
+                perror("open infile");
+                exit(1);
+            }
+			input_heredoc(temp_in_file->value.delimeter, fd);
+			// implement this check that bash does
+			// bash: warning: here-document at line 70 delimited by end-of-file (wanted `delimiter')
+        }
+        else
+        {
+            fd = open(temp_in_file->value.path, O_RDONLY);
+            if (fd == -1)
+            {
+                perror("open infile");
+                exit(1);
+            }
+        }
+        close(cmd->fds[READ_END]);
+        cmd->fds[READ_END] = fd;
+        temp_in_file = temp_in_file->next;
+    }
 }
 
 void	process_outfile(t_cmd *cmd)
@@ -400,6 +458,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	set_pipes(cmd);
 	signal(SIGINT, SIG_IGN);
 	temp_cmd = cmd;
+	cmd_dump(cmd);
 	while (temp_cmd)
 	{
 		link_cmd(temp_cmd);

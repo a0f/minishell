@@ -11,6 +11,7 @@ SRCS := ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c\
 	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c\
 	ft_lstiter.c ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c\
 	ft_mapnew.c ft_mapadd_back.c ft_maplast.c ft_strcmp.c ft_lstdelcontent.c\
+	get_next_line.c get_next_line_utils.c \
 
 OBJS := ft_atoi.o ft_bzero.o ft_calloc.o ft_isalnum.o ft_isalpha.o\
 	ft_isascii.o ft_isdigit.o ft_isprint.o ft_itoa.o ft_memchr.o\
@@ -23,6 +24,7 @@ OBJS := ft_atoi.o ft_bzero.o ft_calloc.o ft_isalnum.o ft_isalpha.o\
 	ft_lstadd_back.o ft_lstadd_front.o ft_lstclear.o ft_lstdelone.o\
 	ft_lstiter.o ft_lstlast.o ft_lstmap.o ft_lstnew.o ft_lstsize.o\
 	ft_mapnew.o ft_mapadd_back.o ft_maplast.o ft_strcmp.o ft_lstdelcontent.o\
+	get_next_line.o get_next_line_utils.o \
 
 CFLAGS ?= -Wall -Wextra -Werror -g
 
