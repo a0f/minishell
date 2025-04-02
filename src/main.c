@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 14:19:42 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/02/28 15:47:59 by showard       ########   odam.nl         */
+/*   Updated: 2025/03/28 17:42:08 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,9 @@ int	main(int argc, char *argv[], char **envp)
 		return (1);
 	while (true)
 	{
-		line = readline("> ");
+		line = readline("minishell> ");
 		if (line == NULL)
-		{
 			state_exit(state, 1);
-		}
 		add_history(line);
 		parser_line = pool_strdup(state->parser_pool, line);
 		free(line);

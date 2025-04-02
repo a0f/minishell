@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/02/11 16:38:44 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/02 16:58:27 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,47 +167,47 @@ char	*tokenize_single(t_pool *pool, t_tokens **tokens, char *cmd)
 		return (tokenize_word(pool, tokens, cmd));
 }
 
-char	*preprocess(t_pool *pool, char *cmd)
+char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 {
 	bool	in_single;
 	bool	in_double;
 	t_sb	*out;
 	size_t	i;
 	t_sb	*var_sb;
-	char	*var_value;
+	t_map *node;
 
 	in_single = false;
 	in_double = false;
-	out = sb_new(pool);
+	out = sb_new(state->parser_pool);
 	i = 0;
 	while (cmd[i])
 	{
-		if (cmd[i] == '\'' && !in_double)
+		if (cmd[i] == '\'' && !in_double && !in_heredoc)
 		{
 			in_single = !in_single;
 			sb_append_char(out, cmd[i]);
 			i++;
 			continue ;
 		}
-		if (cmd[i] == '"' && !in_single)
+		if (cmd[i] == '"' && !in_single && !in_heredoc)
 		{
 			in_double = !in_double;
 			sb_append_char(out, cmd[i]);
 			i++;
 			continue ;
 		}
-		if (cmd[i] == '$' && !in_single)
+		if (cmd[i] == '$' && !in_single && expand)
 		{
 			i++;
-			var_sb = sb_new(pool);
-			while (cmd[i] && cmd[i] != '\'' && cmd[i] != '"' && cmd[i] != ' ')
+			var_sb = sb_new(state->parser_pool);
+			while (cmd[i] && cmd[i] != '\'' && cmd[i] != '"' && cmd[i] != ' ' && cmd[i] != '\n')
 			{
 				sb_append_char(var_sb, cmd[i]);
 				i++;
 			}
-			var_value = getenv(var_sb->data);
-			if (var_value)
-				sb_append(out, var_value);
+			node = map_find(state->env, match_key_str, var_sb->data);
+			if (node != NULL)
+				sb_append(out, node->value);
 		}
 		else
 		{
@@ -223,21 +223,27 @@ char	*preprocess(t_pool *pool, char *cmd)
 	return (out->data);
 }
 
-t_tokens	*tokenize(t_pool *pool, char *cmd)
+t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 {
 	t_tokens	*tokens;
 
 	tokens = NULL;
-	cmd = preprocess(pool, cmd);
+	cmd = preprocess(state, cmd, here_doc, expand);
 	if (!cmd)
 		return (NULL);
+	if (here_doc)
+	{
+		tokens = tokens_new(state->parser_pool, TOKEN_WORD);
+		tokens->value = pool_strdup(state->parser_pool, cmd);
+		return (tokens);
+	}
 	while (*cmd)
 	{
 		while (*cmd == ' ')
 			cmd++;
 		if (*cmd)
 		{
-			cmd = tokenize_single(pool, &tokens, cmd);
+			cmd = tokenize_single(state->parser_pool, &tokens, cmd);
 			if (!cmd)
 				return (NULL);
 		}

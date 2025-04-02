@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenize.h                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:08:45 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 17:03:30 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   tokenize.h                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:08:45 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/02 16:40:48 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_tokens;
 
-t_tokens	*tokenize(t_pool *pool, char *cmd);
+t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand);
 
 #endif  // TOKENIZE_H

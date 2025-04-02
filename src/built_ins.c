@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   built_ins.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/03/20 14:10:03 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   built_ins.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/02 14:22:33 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ void	echo(t_state *state, char *args[])
 	}
 	while (*args != NULL)
 	{
+		if (ft_strcmp(*args, "$?") == 0)
+		{
+			printf("x: %i", state->last_exit_code);
+			continue;
+		}
 		printf("%s", *args);
 		args++;
 	}

@@ -6,12 +6,14 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 15:13:14 by showard       #+#    #+#                 */
-/*   Updated: 2025/02/22 13:27:48 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/02 16:41:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+typedef struct s_state t_state;
 
 # include <stddef.h>
 # include <stdbool.h>
@@ -37,7 +39,7 @@ bool 		match_key_int(void *node, void *key);
 bool 		match_key_long(void *node, void *key);
 bool 		match_key_size_t(void *node, void *key);
 bool 		match_key_float(void *node, void *key);
-void 		*map_find(t_map *head, bool (*f)(void *, void *), void *key);
+t_map 		*map_find(t_map *head, bool (*f)(void *, void *), void *key);
 void 		map_remove(t_map **head, bool (*f)(void *, void *), void *key);
 void 		map_free(t_map **head);
 void		echo(t_state *state, char *args[]);

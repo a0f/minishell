@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/03/27 16:31:54 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/02 16:58:18 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	state_run_string(t_state *state, char *line)
 	t_tokens	*tokens;
 	t_cmd		*cmd;
 
-	tokens = tokenize(state->parser_pool, line);
+	tokens = tokenize(state, line, false, true);
 	if (!tokens)
 	{
 		return ;
@@ -156,20 +156,23 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 
 	pid = fork();
 	if (pid == -1)
-		printf("error lol\n");
+		exit(EXIT_FAILURE); // add real error
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		path_node = map_find(state->env, match_key_str, "PATH");
 		paths = ft_split(path_node->value, ':');
+		if (paths == NULL)
+			exit(EXIT_FAILURE); // add real error
 		cmd = find_valid_path(paths, cmd);
-		execve(cmd, args, envp);
+		if (cmd == NULL)
+			exit(EXIT_FAILURE); // add real error
+		if (execve(cmd, args, envp) == -1)
+			perror("execve error");
 	}
 	else
-	{
 		state->running_command = pid;
-	}
 	return (pid);
 }
 int	ft_mapsize(t_map *map)
@@ -291,11 +294,13 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 #include <stdio.h>
 #include <string.h>
 
-void	input_heredoc(char *delimeter, int fd)
+void	input_heredoc(t_state *state, char *delimeter, int fd)
 {
     int		lim_len;
     char	*gnl_r;
     int		len;
+	t_tokens	*tokens;
+	// t_cmd		*cmd;
 
     lim_len = ft_strlen(delimeter);
     while (1)
@@ -308,21 +313,32 @@ void	input_heredoc(char *delimeter, int fd)
             free(gnl_r);
             break;
         }
-        len = ft_strlen(gnl_r);
-        if (write(fd, gnl_r, len) == -1)
-        {
-            close(fd);
-            free(gnl_r);
-            perror("write");
-            exit(1);
-        }
+		if (delimeter[0] == '\"' || delimeter[0] == '\'')
+			tokens = tokenize(state, gnl_r, true, false);
+		else 
+			tokens = tokenize(state, gnl_r, true, true);
+		if (!tokens)
+		{
+			return ;
+		}
+		while (tokens)
+		{
+			len = ft_strlen(tokens->value);
+			if (write(fd, tokens->value, len) == -1)
+			{
+				close(fd);
+				perror("write");
+				exit(1);
+			}
+			tokens = tokens->next;
+		}
         free(gnl_r);
     }
     // put file pointer back at start to read
     lseek(fd, 0, SEEK_SET);
 }
 
-void	process_infile(t_cmd *cmd)
+void	process_infile(t_state *state, t_cmd *cmd)
 {
     t_input_file	*temp_in_file;
 	int 		fd;
@@ -338,7 +354,7 @@ void	process_infile(t_cmd *cmd)
                 perror("open infile");
                 exit(1);
             }
-			input_heredoc(temp_in_file->value.delimeter, fd);
+			input_heredoc(state, temp_in_file->value.delimeter, fd);
 			// implement this check that bash does
 			// bash: warning: here-document at line 70 delimited by end-of-file (wanted `delimiter')
         }
@@ -394,7 +410,7 @@ void	put_next_output(t_cmd *cmd)
 		cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
 }
 
-void	set_pipes(t_cmd *cmd)
+void	set_pipes(t_state *state, t_cmd *cmd)
 {
 	t_cmd	*temp_cmd;
 	t_cmd	*prev_cmd;
@@ -414,7 +430,7 @@ void	set_pipes(t_cmd *cmd)
 		// if not last command, write output to next command
 		else
 			put_next_output(temp_cmd);
-		process_infile(temp_cmd);
+		process_infile(state, temp_cmd);
 		process_outfile(temp_cmd);
 		prev_cmd = temp_cmd;
 		temp_cmd = temp_cmd->pipe_into;
@@ -455,10 +471,9 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	original_stdout = dup(STDOUT_FILENO);
 	original_stdin = dup(STDIN_FILENO);
 	create_cmd_pipes(state, cmd);
-	set_pipes(cmd);
+	set_pipes(state, cmd);
 	signal(SIGINT, SIG_IGN);
 	temp_cmd = cmd;
-	cmd_dump(cmd);
 	while (temp_cmd)
 	{
 		link_cmd(temp_cmd);

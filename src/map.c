@@ -6,14 +6,14 @@
 /*   By: showard <showard@student.42.fr>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/04 20:09:55 by showard       #+#    #+#                 */
-/*   Updated: 2025/03/20 11:57:18 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/02 16:16:40 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <stdlib.h>
 
-void	*map_find(t_map *head, bool (*f)(void *, void *), void *key)
+t_map	*map_find(t_map *head, bool (*f)(void *, void *), void *key)
 {
 	t_map	*current;
 
