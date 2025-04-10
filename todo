@@ -1,0 +1,3 @@
+parser/tokenizing issues
+echo $? -> doesn't give $? as an arg so theres no way by echo to know that I need to print last exit status
+i forget but one of the routes in which we handle the here_doc wont work and the parser needs to be changed for that
