@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/16 14:42:33 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/16 20:21:46 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#define READ_END 0
+#define WRITE_END 1
 
 t_state	*state_new(void)
 {
@@ -147,6 +149,34 @@ char	*find_valid_path(char **paths, char *cmd)
 	}
 	return (ft_strdup(cmd));
 }
+#include <dirent.h>
+
+void close_fds(void)
+{
+    DIR *fd_directory;
+    struct dirent *read_val;
+    int fd_to_close;
+    int opendir_fd;
+
+    fd_directory = opendir("/proc/self/fd");
+	// set proper error
+    if (fd_directory == NULL)
+		printf("error lol\n");
+    opendir_fd = dirfd(fd_directory);
+    read_val = readdir(fd_directory);
+    while (read_val != NULL)
+    {
+        fd_to_close = ft_atoi(read_val->d_name);
+        if (fd_to_close > 2 && fd_to_close != opendir_fd)
+        {
+			// set proper error
+            if (close(fd_to_close) == -1)
+                printf("error lol\n");
+        }
+        read_val = readdir(fd_directory);
+    }
+    closedir(fd_directory);
+}
 
 pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 {
@@ -168,6 +198,7 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 		cmd = find_valid_path(paths, cmd);
 		if (cmd == NULL)
 			exit(EXIT_FAILURE); // add real error
+		close_fds();
 		if (execve(cmd, args, envp) == -1)
 			perror("execve error");
 	}
@@ -261,9 +292,6 @@ int	find_builtin(t_state *state, t_cmd *cmd)
 		return (exit_ms(state, cmd->args), true);
 	return (false);
 }
-
-#define READ_END 0
-#define WRITE_END 1
 
 void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 {
@@ -478,6 +506,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	{
 		link_cmd(temp_cmd);
 		envp = convert_env(state->env);
+		// built ins aren't closing before exit
 		if (!find_builtin(state, temp_cmd))
 			temp_cmd->pid = state_execve(state, temp_cmd->program,
 					temp_cmd->args, envp);

@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/16 15:41:47 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/16 16:01:02 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,10 @@ void	echo(t_state *state, char *args[])
 	}
 	while (*args != NULL)
 	{
-		if ((*args)[0] == '$' && (*args)[1] == '?')
-		{
-			printf("%i%s", state->last_exit_code, (*args) + 2);
-		}
-		else
+		if (args[1] == NULL)
 			printf("%s", *args);
+		else
+			printf("%s ", *args);
 		args++;
 	}
 	if (print_newline)

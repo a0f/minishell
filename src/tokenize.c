@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenize.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/16 16:02:10 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   tokenize.c                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/16 18:48:14 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 			i++;
 			continue ;
 		}
-		if (cmd[i] == '$' && !in_single && expand)
+		if (cmd[i] == '$' && !in_single && expand && (ft_isalpha(cmd[i + 1]) || cmd[i + 1] == '_' || cmd[i + 1] == '?'))
 		{
 			i++;
 			var_sb = sb_new(state->parser_pool);
