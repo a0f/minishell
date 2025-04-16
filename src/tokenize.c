@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   tokenize.c                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/16 14:30:04 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/16 15:50:28 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,8 +196,7 @@ char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 			i++;
 			continue ;
 		}
-		// hack if cmd[i + 1] to let $? through
-		if (cmd[i] == '$' && !in_single && expand && cmd[i +1] != '?')
+		if (cmd[i] == '$' && !in_single && expand)
 		{
 			i++;
 			var_sb = sb_new(state->parser_pool);
@@ -205,6 +204,10 @@ char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 			{
 				sb_append_char(var_sb, cmd[i]);
 				i++;
+			}
+			if (ft_strcmp(var_sb->data, "?") == 0)
+			{
+				sb_append(out, ft_itoa(state->last_exit_code));
 			}
 			node = map_find(state->env, match_key_str, var_sb->data);
 			if (node != NULL)
