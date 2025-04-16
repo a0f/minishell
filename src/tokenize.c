@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/16 15:54:31 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:02:10 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,8 @@ char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 			{
 				sb_append_char(var_sb, cmd[i]);
 				i++;
+				if (var_sb->data[0] == '?')
+					break ;
 			}
 			if (ft_strcmp(var_sb->data, "?") == 0)
 			{
