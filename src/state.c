@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/02 16:58:18 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/10 18:19:25 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -348,7 +348,7 @@ void	process_infile(t_state *state, t_cmd *cmd)
     {
         if (temp_in_file->type == INPUT_HEREDOC)
         {
-			fd = open(".tmp_heredoc", O_CREAT | O_RDWR | O_TRUNC, 0744);
+			fd = open("/tmp/tmp_heredoc", O_CREAT | O_RDWR | O_TRUNC, 0744);
             if (fd == -1)
             {
                 perror("open infile");
