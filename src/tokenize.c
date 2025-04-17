@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   tokenize.c                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/16 18:48:14 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/17 16:29:04 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ char	*tokenize_word(t_pool *pool, t_tokens **tokens, char *cmd)
 		cmd++;
 	}
 	token->value = word->data;
+	token->ended_by_space = *cmd == ' ';
 	return (cmd);
 }
 
@@ -231,6 +232,25 @@ char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 	return (out->data);
 }
 
+void	merge_tokens(t_state *state, t_tokens *tokens)
+{
+	t_tokens	*current;
+	t_tokens	*next;
+
+	current = tokens;
+	while (current && current->next)
+	{
+		next = current->next;
+		if (current->type == TOKEN_WORD && next->type == TOKEN_WORD && !current->ended_by_space)
+		{
+			current->value = pool_strjoin(state->parser_pool, current->value, next->value);
+			current->next = next->next;
+		}
+		else
+			current = current->next;
+	}
+}
+
 t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 {
 	t_tokens	*tokens;
@@ -243,6 +263,8 @@ t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 	{
 		tokens = tokens_new(state->parser_pool, TOKEN_WORD);
 		tokens->value = pool_strdup(state->parser_pool, cmd);
+		if (!tokens->value)
+			return (NULL);
 		return (tokens);
 	}
 	while (*cmd)
@@ -256,5 +278,6 @@ t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 				return (NULL);
 		}
 	}
+	merge_tokens(state, tokens);
 	return (tokens);
 }

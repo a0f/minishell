@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   tokenize.h                                         :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 16:08:45 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/02 16:40:48 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   tokenize.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 16:08:45 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/17 16:28:08 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	char			*value;
+	bool			ended_by_space;
 	struct s_token	*next;
 }	t_tokens;
 

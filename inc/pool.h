@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:28:54 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 16:00:23 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:16:39 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ void	*pool_realloc(t_pool *pool, void *ptr, size_t old_size,
 			size_t new_size);
 
 char	*pool_strdup(t_pool *pool, const char *s);
+char	*pool_strjoin(t_pool *pool, const char *s1, const char *s2);
 
 #endif  // POOL_H
