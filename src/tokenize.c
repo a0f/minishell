@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/17 16:29:04 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:33:21 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ char	*tokenize_single_quotes(t_pool *pool, t_tokens **tokens, char *cmd)
 	}
 	cmd++;
 	token->value = word->data;
+	token->ended_by_space = cmd[1] == ' ';
 	return (cmd);
 }
 
@@ -99,6 +100,7 @@ char	*tokenize_double_quotes(t_pool *pool, t_tokens **tokens, char *cmd)
 	}
 	cmd++;
 	token->value = word->data;
+	token->ended_by_space = cmd[1] == ' ';
 	return (cmd);
 }
 
@@ -278,6 +280,6 @@ t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 				return (NULL);
 		}
 	}
-	merge_tokens(state, tokens);
+	// merge_tokens(state, tokens);
 	return (tokens);
 }
