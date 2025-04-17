@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/17 16:33:21 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:44:51 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,6 +247,7 @@ void	merge_tokens(t_state *state, t_tokens *tokens)
 		{
 			current->value = pool_strjoin(state->parser_pool, current->value, next->value);
 			current->next = next->next;
+			current->ended_by_space = next->ended_by_space;
 		}
 		else
 			current = current->next;
@@ -280,6 +281,6 @@ t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 				return (NULL);
 		}
 	}
-	// merge_tokens(state, tokens);
+	merge_tokens(state, tokens);
 	return (tokens);
 }
