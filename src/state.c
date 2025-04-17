@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/16 20:21:46 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/17 15:58:27 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,10 @@ char	**convert_env(t_map *state_env)
 	current = state_env;
 	while (current->next != NULL)
 	{
-		env[i] = ft_strjoin_path(current->key, current->value);
+		if (current->value != NULL)
+			env[i] = ft_strjoin_path(current->key, current->value);
+		else
+			env[i] = ft_strdup(current->key);
 		if (env[i] == NULL)
 			return (NULL); // error later
 		i++;
@@ -495,6 +498,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	char	**envp;
 	int		original_stdin;
 	int		original_stdout;
+	int		non_builtin;
 
 	original_stdout = dup(STDOUT_FILENO);
 	original_stdin = dup(STDIN_FILENO);
@@ -504,17 +508,21 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	temp_cmd = cmd;
 	while (temp_cmd)
 	{
+		non_builtin = 0;
 		link_cmd(temp_cmd);
 		envp = convert_env(state->env);
-		// built ins aren't closing before exit
 		if (!find_builtin(state, temp_cmd))
+		{
+			non_builtin = 1;
 			temp_cmd->pid = state_execve(state, temp_cmd->program,
 					temp_cmd->args, envp);
+		}
 		if (!temp_cmd->pipe_into)
 			break ;
 		temp_cmd = temp_cmd->pipe_into;
 	}
-	state->last_exit_code = get_exit_status(temp_cmd->pid);
+	if (non_builtin == 1)
+		state->last_exit_code = get_exit_status(temp_cmd->pid);
 	signal(SIGINT, sigint_interactive);
 	restore_stds(&original_stdin, &original_stdout);
 }
