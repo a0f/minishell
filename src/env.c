@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/22 13:24:48 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/17 16:19:09 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/17 16:44:47 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int	check_valid_identifier(char *arg)
 		fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", arg);
 		return (1);
 	}
-	if (ft_isalnum(arg[0] == 0 && arg[0] != '_'))
+	if (ft_isalpha(arg[0]) == 0 && arg[0] != '_')
 	{
 		fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", arg);
 			return (1);

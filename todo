@@ -2,6 +2,10 @@ parser/tokenizing issues
 echo $? -> doesn't give $? as an arg so theres no way by echo to know that I need to print last exit status
 i forget but one of the routes in which we handle the here_doc wont work and the parser needs to be changed for that
 
+in my heredoc when i do cat << "lol" because its wrapped in quotes environments variables shouldn't expaned
+ie. $HOME should be printed as $HOME and not the value of $HOME
+but because we get rid of the quotes i have no way of knowing that it was wrapped in quotes
+
 export HELLO="123 A-" -> is giving me HELLO= and getting rid of the quotes
 minishell> export HELLO="123 A-"
 program: export

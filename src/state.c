@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/17 16:45:16 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/17 18:33:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,6 +279,7 @@ char	**convert_env(t_map *state_env)
 
 int	find_builtin(t_state *state, t_cmd *cmd)
 {
+	state->last_exit_code = 0;
 	if (ft_strcmp(cmd->program, "echo") == 0)
 		return (echo(state, &cmd->args[1]), true);
 	else if (ft_strcmp(cmd->program, "cd") == 0)
@@ -369,7 +370,7 @@ void	input_heredoc(t_state *state, char *delimeter, int fd)
     lseek(fd, 0, SEEK_SET);
 }
 
-void	process_infile(t_state *state, t_cmd *cmd)
+bool	process_infile(t_state *state, t_cmd *cmd)
 {
     t_input_file	*temp_in_file;
 	int 		fd;
@@ -383,7 +384,7 @@ void	process_infile(t_state *state, t_cmd *cmd)
             if (fd == -1)
             {
                 perror("open infile");
-                exit(1);
+				return false;
             }
 			input_heredoc(state, temp_in_file->value.delimeter, fd);
 			// implement this check that bash does
@@ -395,16 +396,17 @@ void	process_infile(t_state *state, t_cmd *cmd)
             if (fd == -1)
             {
                 perror("open infile");
-                exit(1);
+                return (false);
             }
         }
         close(cmd->fds[READ_END]);
         cmd->fds[READ_END] = fd;
         temp_in_file = temp_in_file->next;
     }
+	return (true);
 }
 
-void	process_outfile(t_cmd *cmd)
+bool	process_outfile(t_cmd *cmd)
 {
 	t_output_file	*temp_out_file;
 	int				fd;
@@ -419,10 +421,16 @@ void	process_outfile(t_cmd *cmd)
 		else
 			flags |= O_APPEND;
 		fd = open(temp_out_file->path, flags, 0777); // todo: error check
+		if (fd == -1)
+		{
+			perror("open outfile");
+			return (false);
+		}
 		close(cmd->fds[WRITE_END]);
 		cmd->fds[WRITE_END] = fd;
 		temp_out_file = temp_out_file->next;
 	}
+	return (true);
 }
 
 void	get_previous_input(t_cmd *prev_cmd, t_cmd *cmd)
@@ -441,7 +449,7 @@ void	put_next_output(t_cmd *cmd)
 		cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
 }
 
-void	set_pipes(t_state *state, t_cmd *cmd)
+bool	set_pipes(t_state *state, t_cmd *cmd)
 {
 	t_cmd	*temp_cmd;
 	t_cmd	*prev_cmd;
@@ -461,11 +469,14 @@ void	set_pipes(t_state *state, t_cmd *cmd)
 		// if not last command, write output to next command
 		else
 			put_next_output(temp_cmd);
-		process_infile(state, temp_cmd);
-		process_outfile(temp_cmd);
+		if (!process_infile(state, temp_cmd))
+			return (false);
+		if (!process_outfile(temp_cmd))
+			return (false);
 		prev_cmd = temp_cmd;
 		temp_cmd = temp_cmd->pipe_into;
 	}
+	return (true);
 }
 
 void	restore_stds(int *original_stdin, int *original_stdout)
@@ -503,7 +514,12 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	original_stdout = dup(STDOUT_FILENO);
 	original_stdin = dup(STDIN_FILENO);
 	create_cmd_pipes(state, cmd);
-	set_pipes(state, cmd);
+	if (!set_pipes(state, cmd))
+	{
+		close_fds();
+		state->last_exit_code = 1;
+		return ;
+	}
 	signal(SIGINT, SIG_IGN);
 	temp_cmd = cmd;
 	while (temp_cmd)
@@ -516,6 +532,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 			non_builtin = 1;
 			temp_cmd->pid = state_execve(state, temp_cmd->program,
 					temp_cmd->args, envp);
+			waitpid(temp_cmd->pid, NULL, 0);
 		}
 		if (!temp_cmd->pipe_into)
 			break ;
