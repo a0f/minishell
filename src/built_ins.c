@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   built_ins.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/17 16:59:37 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   built_ins.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
+/*   Updated: 2025/04/18 13:31:12 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,10 @@ void	pwd(t_state *state)
 
 void	cd(t_state *state, char *path[])
 {
-	t_state	*statelol;
 	t_map	*pwd_node;
 	char	*buffer;
 	char	*temp;
 
-	statelol = state;
 	if (*path == NULL)
 	{
 		pwd_node = map_find(state->env, match_key_str, "HOME");
