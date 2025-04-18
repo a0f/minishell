@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   state.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/17 18:33:29 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   state.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/18 14:23:41 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,8 @@ char	*find_valid_path(char **paths, char *cmd)
 	while (paths[i] != NULL)
 	{
 		temp = path_complete(paths[i], cmd);
+		if (temp == NULL)
+			return (NULL); // add real error
 		if (access(temp, X_OK) == 0)
 			return (temp);
 		free(temp);
@@ -178,6 +180,26 @@ void close_fds(void)
     closedir(fd_directory);
 }
 
+#include <string.h>  // for strchr
+
+void	check_cmd(char *cmd)
+{
+    struct stat	buffer;
+
+    if (!ft_strchr(cmd, '/'))
+        fprintf(stderr, "minishell: %s: command not found\n", cmd), 
+			exit(127);
+    if (stat(cmd, &buffer) == -1 && errno == ENOENT)
+        fprintf(stderr, "minishell: %s: No such file or directory\n", cmd), 
+			exit(127);
+    if (S_ISDIR(buffer.st_mode))
+        fprintf(stderr, "minishell: %s: Is a directory\n", cmd), 
+			exit(126);
+    if (access(cmd, X_OK) == -1)
+        fprintf(stderr, "minishell: %s: Permission denied\n", cmd), 
+			exit(126);
+}
+
 pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 {
 	pid_t	pid;
@@ -189,8 +211,7 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 		exit(EXIT_FAILURE); // add real error
 	if (pid == 0)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
 		path_node = map_find(state->env, match_key_str, "PATH");
 		paths = ft_split(path_node->value, ':');
 		if (paths == NULL)
@@ -198,9 +219,20 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 		cmd = find_valid_path(paths, cmd);
 		if (cmd == NULL)
 			exit(EXIT_FAILURE); // add real error
+		if (ft_strchr(cmd, '/') == NULL)
+		{
+			free(cmd);
+			cmd = ft_strdup(args[0]);
+			if (cmd == NULL)
+				exit(EXIT_FAILURE); // add real error
+		}		
 		close_fds();
+		if (cmd == NULL)
+			exit(errno); // add real error
+		check_cmd(cmd);
+			exit(126);
 		if (execve(cmd, args, envp) == -1)
-			perror("execve error");
+			perror("minishell");
 	}
 	else
 		state->running_command = pid;
@@ -532,7 +564,8 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 			non_builtin = 1;
 			temp_cmd->pid = state_execve(state, temp_cmd->program,
 					temp_cmd->args, envp);
-			waitpid(temp_cmd->pid, NULL, 0);
+			// cat | ls was not waiting for input so i added this. it breaks the tester but works when i run it manually?
+			// waitpid(temp_cmd->pid, NULL, 0);
 		}
 		if (!temp_cmd->pipe_into)
 			break ;
