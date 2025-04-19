@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/18 14:23:41 by showard          ###   ########.fr       */
+/*   Updated: 2025/04/19 13:03:11 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,6 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 		if (cmd == NULL)
 			exit(errno); // add real error
 		check_cmd(cmd);
-			exit(126);
 		if (execve(cmd, args, envp) == -1)
 			perror("minishell");
 	}
