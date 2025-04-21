@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 13:24:48 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 16:41:12 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:18:51 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,22 @@ int	check_valid_identifier(char *arg)
 	return (0);
 }
 
+void	add_key(t_state *state, char *value, char *key)
+{
+	t_map	*node;
+
+	if (value)
+	{
+		value = pool_strdup(state->static_pool, value + 1);
+		if (!value)
+			state_exit(state, 1);
+	}
+	node = ft_mapnew(key, value);
+	if (!node)
+		state_exit(state, 1);
+	ft_mapadd_back(&state->env, node);
+}
+
 int	export(char *argv[], t_state *state)
 {
 	char	*key;
@@ -56,18 +72,20 @@ int	export(char *argv[], t_state *state)
 	while (argv[i] != NULL)
 	{
 		if (ft_strchr(argv[i], '='))
-			key = ft_substr(argv[i], 0, (ft_strchr(argv[i], '=') - argv[i]));
+			key = pool_substr(state->static_pool, argv[i], 0,
+					(ft_strchr(argv[i], '=') - argv[i]));
 		else
-			key = ft_strdup(argv[i]);
+			key = pool_strdup(state->static_pool, argv[i]);
 		if (check_valid_identifier(key) != 0)
 		{
 			state->last_exit_code = 1;
-			return ;
+			return (0);
 		}
 		if (map_find(state->env, match_key_str, key) && ft_strchr(argv[i], '='))
-			replace_value(state, ft_strchr(argv[i], '='), key);
+			replace_value(state, ft_strchr(argv[i], '=') + 1, key);
 		else
 			add_key(state, ft_strchr(argv[i], '='), key);
 		i++;
 	}
+	return (0);
 }

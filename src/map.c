@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 20:09:55 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 16:44:29 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:43:58 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ void	map_remove(t_map **head, bool (*f)(void *, void *), void *key)
 			{
 				prev->next = current->next;
 			}
-			free(current->key);
-			free(current->value);
 			free(current);
 			return ;
 		}
@@ -68,8 +66,6 @@ void	map_free(t_map **head)
 	{
 		last_node = temp;
 		temp = temp->next;
-		free(last_node->key);
-		free(last_node->value);
 		free(last_node);
 	}
 	*head = NULL;

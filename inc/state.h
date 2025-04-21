@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:39:12 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 16:17:06 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:41:49 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ struct s_state
 {
 	t_pool	*program_pool;
 	t_pool	*parser_pool;
+	t_pool	*static_pool;
 	t_map	*env;
 	pid_t	running_command;
 	int		last_exit_code;

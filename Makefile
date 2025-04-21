@@ -9,8 +9,9 @@ RM = rm -f
 
 ## Files ##
 
-SRCS = src/env.c src/debug_cmds.c src/map.c src/match_key.c src/built_ins.c src/state.c \
-	   src/tokenize.c src/parse.c src/sb.c src/pool.c src/pool_utils.c src/main.c
+SRCS = src/built_ins2.c src/env2.c src/map.c src/parse2.c src/pool.c src/state.c src/tokenize.c \
+	src/built_ins.c src/env.c src/match_key2.c src/parse3.c src/pool_utils.c src/tokenize2.c \
+	src/debug_cmds.c src/main.c src/match_key.c src/parse.c src/sb.c src/tokenize3.c
 OBJS = $(SRCS:src/%.c=obj/%.o)
 
 ## Configuration ##

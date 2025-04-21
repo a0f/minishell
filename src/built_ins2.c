@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 16:31:02 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 18:45:14 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void	cd(t_state *state, char *path[])
 {
 	t_map	*pwd_node;
 	char	*buffer;
-	char	*temp;
 
 	if (*path == NULL)
 		cd_home(state, &pwd_node);
@@ -92,7 +91,5 @@ void	cd(t_state *state, char *path[])
 	buffer = ft_calloc(PATH_MAX + 1, sizeof(char));
 	if (buffer == NULL)
 		error_func();
-	temp = pwd_node->value;
 	pwd_node->value = getcwd(buffer, PATH_MAX);
-	free(temp);
 }
