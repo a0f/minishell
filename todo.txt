@@ -27,3 +27,9 @@ showard@f0r5s11:~/Incomplete Projects/minishell_exe$
 minishell does:
 minishell> cat (CTRL-C) 
 ^Cminishell> 
+
+make sure all exits call state_free
+
+make sure all allocations use a pool
+
+make sure to reset pools regularly
