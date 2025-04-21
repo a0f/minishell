@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   state.h                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 15:39:12 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/02 16:42:05 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   state.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 15:39:12 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/21 16:17:06 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define STATE_H
 
 # include "minishell.h"
+
+typedef struct s_state	t_state;
 
 struct s_state
 {

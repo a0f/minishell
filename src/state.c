@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   state.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/21 17:04:39 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   state.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/21 17:36:07 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -434,7 +434,7 @@ bool	process_infile(t_state *state, t_cmd *cmd)
                 perror("open infile");
 				return false;
             }
-			input_heredoc(state, temp_in_file->value.heredoc.delimeter, fd, temp_in_file->value.heredoc.expand);
+			input_heredoc(state, temp_in_file->value.s_heredoc.delimeter, fd, temp_in_file->value.s_heredoc.expand);
 			// implement this check that bash does
 			// bash: warning: here-document at line 70 delimited by end-of-file (wanted `delimiter')
         }

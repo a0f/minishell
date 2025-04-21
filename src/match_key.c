@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   match_key.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.42.fr>              +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/04 20:11:00 by showard       #+#    #+#                 */
-/*   Updated: 2025/02/11 16:37:41 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   match_key.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/04 20:11:00 by showard           #+#    #+#             */
+/*   Updated: 2025/04/21 16:45:22 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,18 +69,6 @@ bool	match_key_size_t(void *node, void *key)
 
 	map_node = (t_map *)node;
 	if (*(size_t *)map_node->key == *(size_t *)key)
-	{
-		return (true);
-	}
-	return (false);
-}
-
-bool	match_key_float(void *node, void *key)
-{
-	t_map *map_node;
-
-	map_node = (t_map *)node;
-	if (*(float *)map_node->key == *(float *)key)
 	{
 		return (true);
 	}

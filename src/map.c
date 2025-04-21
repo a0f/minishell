@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   map.c                                              :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.42.fr>              +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/04 20:09:55 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/02 16:16:40 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   map.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/04 20:09:55 by showard           #+#    #+#             */
+/*   Updated: 2025/04/21 16:44:29 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ void	map_remove(t_map **head, bool (*f)(void *, void *), void *key)
 
 void	map_free(t_map **head)
 {
-	t_map *temp;
-	t_map *last_node;
+	t_map	*temp;
+	t_map	*last_node;
 
 	temp = *head;
 	while (temp != NULL)

@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:14:29 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 15:34:50 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:13:11 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,15 @@ bool	sb_append_char(t_sb *sb, char c)
 	str[0] = c;
 	str[1] = '\0';
 	return (sb_append(sb, str));
+}
+
+bool	sb_append_int(t_sb *sb, int n)
+{
+	bool	res;
+	char	*str;
+
+	str = ft_itoa(n);
+	res = sb_append(sb, str);
+	free(str);
+	return (res);
 }

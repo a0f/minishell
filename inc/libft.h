@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 18:59:56 by showard           #+#    #+#             */
-/*   Updated: 2025/02/04 20:16:01 by showard          ###   ########.fr       */
+/*   Updated: 2025/04/21 16:15:06 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ typedef struct s_list
 {
 	void			*content;
 	struct s_list	*next;
-}					t_list;
+}	t_list;
 
-typedef struct s_map{
-	struct s_map *next;
-	char *key;
-	char *value;
-} t_map;
-
+typedef struct s_map
+{
+	struct s_map	*next;
+	char			*key;
+	char			*value;
+}	t_map;
 
 int			ft_toupper(int c);
 int			ft_isalpha(int c);

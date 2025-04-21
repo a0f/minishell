@@ -1,16 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 14:19:42 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/03/28 17:42:08 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 14:19:42 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/21 16:32:59 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	write_stderr(char *str)
+{
+	write(STDERR_FILENO, str, ft_strlen(str));
+}
 
 int	main(int argc, char *argv[], char **envp)
 {

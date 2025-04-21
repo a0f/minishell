@@ -1,41 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   debug_cmds.c                                       :+:      :+:    :+:   */
+/*   match_key2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/03 12:56:28 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 17:33:57 by mwijnsma         ###   ########.fr       */
+/*   Created: 2025/02/04 20:11:00 by showard           #+#    #+#             */
+/*   Updated: 2025/04/21 16:45:34 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
 #include <stdio.h>
 
-void	print_lst(t_list *lst)
+bool	match_key_float(void *node, void *key)
 {
-	t_list	*current;
+	t_map	*map_node;
 
-	current = lst;
-	while (current != NULL)
+	map_node = (t_map *)node;
+	if (*(float *)map_node->key == *(float *)key)
 	{
-		printf("%s\n", (char *)current->content);
-		current = current->next;
+		return (true);
 	}
-}
-
-void	debug_print_map(t_map *lst)
-{
-	t_map	*current;
-
-	current = lst;
-	while (current != NULL)
-	{
-		printf("KEY: %s", (char *)current->key);
-		printf("                               VALUE: %s\n",
-			(char *)current->value);
-		current = current->next;
-	}
+	return (false);
 }

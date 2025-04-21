@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:08:45 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 16:05:30 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:27:15 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define TOKENIZE_H
 
 # include "minishell.h"
+
+typedef struct s_state	t_state;
 
 typedef enum s_token_type
 {
@@ -33,6 +35,18 @@ typedef struct s_token
 	bool			quoted;
 	struct s_token	*next;
 }	t_tokens;
+
+typedef struct s_args
+{
+	t_state	*state;
+	char	*cmd;
+	bool	in_heredoc;
+	bool	expand;
+	bool	in_single;
+	bool	in_double;
+	size_t	i;
+	t_sb	*out;
+}	t_args;
 
 t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand);
 

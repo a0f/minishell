@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:06:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 16:12:13 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:18:01 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ typedef enum s_input_type
 typedef union s_input_value
 {
 	char	*path;
-	struct {
+	struct
+	{
 		char	*delimeter;
 		bool	expand;
-	} heredoc;
+	}	s_heredoc;
 }	t_input_value;
 
 typedef struct s_input_file
@@ -47,7 +48,7 @@ typedef struct s_output_file
 {
 	t_output_type			type;
 	char					*path;
-	struct s_output_file	*next; 
+	struct s_output_file	*next;
 }	t_output_file;
 
 typedef struct s_cmd
@@ -64,6 +65,6 @@ typedef struct s_cmd
 }	t_cmd;
 
 t_cmd	*parse(t_pool *pool, t_tokens *tokens);
-void	cmd_dump(t_cmd *cmd);  // todo: remove this
+void	cmd_dump(t_cmd *cmd);
 
 #endif  // PARSE_H

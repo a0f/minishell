@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 15:43:20 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:25:18 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,41 +56,6 @@ void	pwd(t_state *state)
 	signal(SIGPIPE, SIG_DFL);
 }
 
-void	cd(t_state *state, char *path[])
-{
-	t_map	*pwd_node;
-	char	*buffer;
-	char	*temp;
-
-	if (*path == NULL)
-	{
-		pwd_node = map_find(state->env, match_key_str, "HOME");
-		chdir(pwd_node->value);
-	}
-	else
-	{
-		if (path[1] != NULL)
-		{
-			fprintf(stderr, "minishell: cd: too many arguments\n");
-			state->last_exit_code = 1;
-			return ;
-		}
-		if (chdir(*path) != 0)
-		{
-			state->last_exit_code = 1;
-			perror("Error: ");
-		}
-		// error exit function needed?
-	}
-	pwd_node = map_find(state->env, match_key_str, "PWD");
-	buffer = ft_calloc(PATH_MAX + 1, sizeof(char));
-	if (buffer == NULL)
-		error_func();
-	temp = pwd_node->value;
-	pwd_node->value = getcwd(buffer, PATH_MAX);
-	free(temp);
-}
-
 void	env(t_state *state)
 {
 	t_map	*current;
@@ -104,41 +69,4 @@ void	env(t_state *state)
 		current = current->next;
 	}
 	signal(SIGPIPE, SIG_DFL);
-}
-
-void	unset(t_state *state, char *key)
-{
-	state->last_exit_code = 0;
-	if (key == NULL)
-		return;
-	map_remove(&state->env, match_key_str, key);
-}
-
-void	exit_ms(t_state *state, char *argv[])
-{
-	int i;
-	int exit_status;
-
-	i = 0;
-	if (argv[1] == NULL)
-		(state_free(state), exit(0));
-	if(argv[1][i] == '+' || argv[1][i] == '-')
-		i++;
-	while(argv[1][i] != '\0')
-	{
-		if (ft_isdigit(argv[1][i]) == 0)
-		{
-			fprintf(stderr, "exit\nminishell: exit: %s: numeric argument required\n", argv[1]);
-			(state_free(state), exit(2));
-		}
-		i++;
-	}
-	if (argv[2] != NULL)
-	{
-		fprintf(stderr, "exit\nminishell: exit: too many arguments\n");
-		state->last_exit_code = 1;
-		return ;
-	}
-	exit_status = ft_atoi(argv[1]);
-	(state_free(state), exit(exit_status));
 }
