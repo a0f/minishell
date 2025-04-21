@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 16:12:38 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/21 17:04:39 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void close_fds(void)
     while (read_val != NULL)
     {
         fd_to_close = ft_atoi(read_val->d_name);
-        if (fd_to_close > 2 && fd_to_close != opendir_fd)
+        if (fd_to_close > 2 && fd_to_close != opendir_fd && fd_to_close < 1024)
         {
 			// set proper error
 			// printf("Closing fd %d\n", fd_to_close);
@@ -215,18 +215,21 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 	{
 		(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
 		path_node = map_find(state->env, match_key_str, "PATH");
-		paths = ft_split(path_node->value, ':');
-		if (paths == NULL)
-			exit(EXIT_FAILURE); // add real error
-		cmd = find_valid_path(paths, cmd);
-		if (cmd == NULL)
-			exit(EXIT_FAILURE); // add real error
-		if (ft_strchr(cmd, '/') == NULL)
-		{
-			free(cmd);
-			cmd = ft_strdup(args[0]);
+			if (path_node)
+			{
+			paths = ft_split(path_node->value, ':');
+			if (paths == NULL)
+				exit(EXIT_FAILURE); // add real error
+			cmd = find_valid_path(paths, cmd);
 			if (cmd == NULL)
 				exit(EXIT_FAILURE); // add real error
+			if (ft_strchr(cmd, '/') == NULL)
+			{
+				free(cmd);
+				cmd = ft_strdup(args[0]);
+				if (cmd == NULL)
+					exit(EXIT_FAILURE); // add real error
+			}
 		}		
 		close_fds();
 		if (cmd == NULL)
