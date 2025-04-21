@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   state.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 10:57:13 by showard          ###   ########.fr       */
+/*   Updated: 2025/04/21 16:12:38 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ t_state	*state_new(void)
 void	state_free(t_state *state)
 {
 	// todo: free other state vars
+	// todo: periodically free these pools
 	if (state->program_pool)
 	{
 		pool_free(state->program_pool);
@@ -172,6 +173,7 @@ void close_fds(void)
         if (fd_to_close > 2 && fd_to_close != opendir_fd)
         {
 			// set proper error
+			// printf("Closing fd %d\n", fd_to_close);
             if (close(fd_to_close) == -1)
                 printf("error lol\n");
         }
@@ -310,22 +312,36 @@ char	**convert_env(t_map *state_env)
 
 int	find_builtin(t_state *state, t_cmd *cmd)
 {
+	// TODO: Error check
+	int orig_stdout = dup(STDOUT_FILENO);
+	dup2(cmd->fds[1], STDOUT_FILENO);
 	state->last_exit_code = 0;
 	if (ft_strcmp(cmd->program, "echo") == 0)
-		return (echo(state, &cmd->args[1]), true);
+	{
+		// fprintf(stderr, "Echoing to %d\n", cmd->fds[1]);
+		echo(state, &cmd->args[1]);
+	}
 	else if (ft_strcmp(cmd->program, "cd") == 0)
-		return (cd(state, &cmd->args[1]), true);
+		cd(state, &cmd->args[1]);
 	else if (ft_strcmp(cmd->program, "pwd") == 0)
-		return (pwd(state), true);
+		pwd(state);
 	else if (ft_strcmp(cmd->program, "export") == 0)
-		return (export(&cmd->args[1], state), true);
+		export(&cmd->args[1], state);
 	else if (ft_strcmp(cmd->program, "unset") == 0)
-		return (unset(state, cmd->args[1]), true);
+		unset(state, cmd->args[1]);
 	else if (ft_strcmp(cmd->program, "env") == 0)
-		return (env(state), true);
+		env(state);
 	else if (ft_strcmp(cmd->program, "exit") == 0)
-		return (exit_ms(state, cmd->args), true);
-	return (false);
+		exit_ms(state, cmd->args);
+	else
+	{
+		dup2(orig_stdout, STDOUT_FILENO);
+		close(orig_stdout);
+		return (false);
+	}
+	dup2(orig_stdout, STDOUT_FILENO);
+	close(orig_stdout);
+	return (true);
 }
 
 void	create_cmd_pipes(t_state *state, t_cmd *cmd)
@@ -345,6 +361,7 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 			state_free(state);
 			exit(1);
 		}
+		// fprintf(stderr, "created pipe, %d %d\n", temp_cmd->pipe[0], temp_cmd->pipe[1]);
 		temp_cmd = temp_cmd->pipe_into;
 	}
 }
@@ -357,7 +374,7 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 #include <stdio.h>
 #include <string.h>
 
-void	input_heredoc(t_state *state, char *delimeter, int fd)
+void	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 {
     int		lim_len;
     char	*gnl_r;
@@ -376,10 +393,7 @@ void	input_heredoc(t_state *state, char *delimeter, int fd)
             free(gnl_r);
             break;
         }
-		if (delimeter[0] == '\"' || delimeter[0] == '\'')
-			tokens = tokenize(state, gnl_r, true, false);
-		else 
-			tokens = tokenize(state, gnl_r, true, true);
+		tokens = tokenize(state, gnl_r, true, expand);
 		if (!tokens)
 		{
 			return ;
@@ -417,7 +431,7 @@ bool	process_infile(t_state *state, t_cmd *cmd)
                 perror("open infile");
 				return false;
             }
-			input_heredoc(state, temp_in_file->value.delimeter, fd);
+			input_heredoc(state, temp_in_file->value.heredoc.delimeter, fd, temp_in_file->value.heredoc.expand);
 			// implement this check that bash does
 			// bash: warning: here-document at line 70 delimited by end-of-file (wanted `delimiter')
         }
@@ -474,10 +488,12 @@ void	get_previous_input(t_cmd *prev_cmd, t_cmd *cmd)
 
 void	put_next_output(t_cmd *cmd)
 {
-	if (cmd->pipe_into->in_files == NULL)
-		cmd->fds[WRITE_END] = cmd->pipe_into->pipe[WRITE_END];
-	else
-		cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
+	// fprintf(stderr, "%s is going to write to the next command!\n", cmd->program);
+
+	cmd->fds[WRITE_END] = cmd->pipe_into->pipe[WRITE_END];
+	// if (cmd->pipe_into->in_files == NULL)
+	// else
+	// 	cmd->fds[WRITE_END] = dup(STDOUT_FILENO);
 }
 
 bool	set_pipes(t_state *state, t_cmd *cmd)
@@ -489,6 +505,7 @@ bool	set_pipes(t_state *state, t_cmd *cmd)
 	prev_cmd = NULL;
 	while (temp_cmd)
 	{
+		temp_cmd->run = true;
 		if (temp_cmd == cmd)
 			temp_cmd->fds[READ_END] = dup(STDIN_FILENO);
 		// if not first command, get input from previous command
@@ -501,9 +518,9 @@ bool	set_pipes(t_state *state, t_cmd *cmd)
 		else
 			put_next_output(temp_cmd);
 		if (!process_infile(state, temp_cmd))
-			return (false);
+			temp_cmd->run = false;
 		if (!process_outfile(temp_cmd))
-			return (false);
+			temp_cmd->run = false;
 		prev_cmd = temp_cmd;
 		temp_cmd = temp_cmd->pipe_into;
 	}
@@ -558,20 +575,40 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 		non_builtin = 0;
 		link_cmd(temp_cmd);
 		envp = convert_env(state->env);
-		if (!find_builtin(state, temp_cmd))
+		// fprintf(stderr, "RUNNING\n");
+		// cmd_dump(temp_cmd);
+		// fprintf(stderr, "\n");
+		if (temp_cmd->run)
 		{
-			non_builtin = 1;
-			temp_cmd->pid = state_execve(state, temp_cmd->program,
-					temp_cmd->args, envp);
-			// cat | ls was not waiting for input so i added this. it hangs the tester but works when I do the testers command manually?
-			// waitpid(temp_cmd->pid, NULL, 0);
+			if (!find_builtin(state, temp_cmd))
+			{
+				non_builtin = 1;
+				temp_cmd->pid = state_execve(state, temp_cmd->program,
+						temp_cmd->args, envp);
+			}
+			else
+			{
+				temp_cmd->pid = -1;
+			}
 		}
 		if (!temp_cmd->pipe_into)
 			break ;
 		temp_cmd = temp_cmd->pipe_into;
 	}
-	if (non_builtin == 1)
+	if (!temp_cmd->run)
+		state->last_exit_code = 1;
+	else if (non_builtin == 1)
 		state->last_exit_code = get_exit_status(temp_cmd->pid);
-	signal(SIGINT, sigint_interactive);
+	temp_cmd = cmd;
 	restore_stds(&original_stdin, &original_stdout);
+	close_fds();
+	while (temp_cmd)
+	{
+		if (temp_cmd->pid != -1 && temp_cmd->run)
+		{
+			waitpid(temp_cmd->pid, NULL, 0);
+		}
+		temp_cmd = temp_cmd->pipe_into;
+	}
+	signal(SIGINT, sigint_interactive);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_ins.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/04/18 14:14:06 by showard          ###   ########.fr       */
+/*   Updated: 2025/04/21 15:43:20 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	echo(t_state *state, char *args[])
 {
 	bool	print_newline;
 
+	signal(SIGPIPE, SIG_IGN);
 	print_newline = true;
 	if (*args && ft_strcmp("-n", *args) == 0)
 	{
@@ -42,14 +43,17 @@ void	echo(t_state *state, char *args[])
 	if (print_newline)
 		printf("\n");
 	state->last_exit_code = 0;
+	signal(SIGPIPE, SIG_DFL);
 }
 
 void	pwd(t_state *state)
 {
 	t_map	*pwd_node;
 
+	signal(SIGPIPE, SIG_IGN);
 	pwd_node = map_find(state->env, match_key_str, "PWD");
 	printf("%s\n", pwd_node->value);
+	signal(SIGPIPE, SIG_DFL);
 }
 
 void	cd(t_state *state, char *path[])
@@ -91,6 +95,7 @@ void	env(t_state *state)
 {
 	t_map	*current;
 
+	signal(SIGPIPE, SIG_IGN);
 	current = state->env;
 	while (current != NULL)
 	{
@@ -98,6 +103,7 @@ void	env(t_state *state)
 			printf("%s=%s\n", (char *)current->key, (char *)current->value);
 		current = current->next;
 	}
+	signal(SIGPIPE, SIG_DFL);
 }
 
 void	unset(t_state *state, char *key)

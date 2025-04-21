@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:18:37 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/03/20 13:02:19 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:12:46 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,8 @@ t_cmd *parse(t_pool *pool, t_tokens *tokens) {
 				printf("Expected heredoc delimiter\n");
 				return (NULL);
 			}
-			in_file->value.delimeter = pool_strdup(pool, tokens->value);
+			in_file->value.heredoc.delimeter = pool_strdup(pool, tokens->value);
+			in_file->value.heredoc.expand = !tokens->quoted;
 		} else if (tokens->type == TOKEN_GTGT) {
 			t_output_file *out_file = cmd_append_out_file(pool, cmd);
 			if (!out_file) {
@@ -168,42 +169,42 @@ t_cmd *parse(t_pool *pool, t_tokens *tokens) {
 }
 
 void cmd_dump(t_cmd *cmd) {
-	printf("program: %s\n", cmd->program);
-	printf("input fd: %d\n", cmd->fds[0]);
-	printf("output fd: %d\n", cmd->fds[1]);
-	printf("args: [");
+	fprintf(stderr, "program: %s\n", cmd->program);
+	fprintf(stderr, "input fd: %d\n", cmd->fds[0]);
+	fprintf(stderr, "output fd: %d\n", cmd->fds[1]);
+	fprintf(stderr, "args: [");
 	for (size_t i = 0; cmd->args[i]; i++) {
-		printf("%s, ", cmd->args[i]);
+		fprintf(stderr, "%s, ", cmd->args[i]);
 	}
-	printf("]\n");
+	fprintf(stderr, "]\n");
 	if (cmd->in_files) {
-		printf("in_files: [");
+		fprintf(stderr, "in_files: [");
 		t_input_file *file = cmd->in_files;
 		while (file) {
 			if (file->type == INPUT_FILE) {
-				printf("file %s, ", file->value.path);
+				fprintf(stderr, "file %s, ", file->value.path);
 			} else {
-				printf("heredoc %s, ", file->value.delimeter);
+				fprintf(stderr, "heredoc %s, ", file->value.heredoc.delimeter);
 			}
 			file = file->next;
 		}
-		printf("]\n");
+		fprintf(stderr, "]\n");
 	}
 	if (cmd->out_files) {
-		printf("out_files: [");
+		fprintf(stderr, "out_files: [");
 		t_output_file *file = cmd->out_files;
 		while (file) {
 			if (file->type == OUTPUT_APPEND) {
-				printf("append %s, ", file->path);
+				fprintf(stderr, "append %s, ", file->path);
 			} else {
-				printf("truncate %s, ", file->path);
+				fprintf(stderr, "truncate %s, ", file->path);
 			}
 			file = file->next;
 		}
-		printf("]\n");
+		fprintf(stderr, "]\n");
 	}
 	if (cmd->pipe_into) {
-		printf("-- pipe into --\n");
+		fprintf(stderr, "-- pipe into --\n");
 		cmd_dump(cmd->pipe_into);
 	}
 }

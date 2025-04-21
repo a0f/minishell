@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/17 17:14:18 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:07:34 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ char	*tokenize_single_quotes(t_pool *pool, t_tokens **tokens, char *cmd)
 	cmd++;
 	token->value = word->data;
 	token->ended_by_space = *cmd == ' ';
+	token->quoted = true;
 	return (cmd);
 }
 
@@ -101,6 +102,7 @@ char	*tokenize_double_quotes(t_pool *pool, t_tokens **tokens, char *cmd)
 	cmd++;
 	token->value = word->data;
 	token->ended_by_space = *cmd == ' ';
+	token->quoted = true;
 	return (cmd);
 }
 
@@ -148,6 +150,7 @@ char	*tokenize_word(t_pool *pool, t_tokens **tokens, char *cmd)
 	}
 	token->value = word->data;
 	token->ended_by_space = *cmd == ' ';
+	token->quoted = false;
 	return (cmd);
 }
 
@@ -248,6 +251,7 @@ void	merge_tokens(t_state *state, t_tokens *tokens)
 			current->value = pool_strjoin(state->parser_pool, current->value, next->value);
 			current->next = next->next;
 			current->ended_by_space = next->ended_by_space;
+			current->quoted |= next->quoted;
 		}
 		else
 			current = current->next;

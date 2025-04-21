@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:06:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/03/20 14:21:56 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:12:13 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,10 @@ typedef enum s_input_type
 typedef union s_input_value
 {
 	char	*path;
-	char	*delimeter;
+	struct {
+		char	*delimeter;
+		bool	expand;
+	} heredoc;
 }	t_input_value;
 
 typedef struct s_input_file
@@ -56,6 +59,7 @@ typedef struct s_cmd
 	struct s_cmd	*pipe_into;
 	int				fds[2];
 	int				pipe[2];
+	bool			run;
 	pid_t			pid;
 }	t_cmd;
 

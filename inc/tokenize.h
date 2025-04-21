@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:08:45 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/17 16:28:08 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:05:30 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_token
 	t_token_type	type;
 	char			*value;
 	bool			ended_by_space;
+	bool			quoted;
 	struct s_token	*next;
 }	t_tokens;
 
