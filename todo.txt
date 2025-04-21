@@ -12,3 +12,18 @@ we aren't using our one global variable but people are telling me it is required
 
 evalsheet/subject
 find the evalsheet and go through the subject and make sure it atleast passes those
+
+CTRL-C only works properly if you run a command then do it
+else it kills with SIGINT
+
+
+CTRL-C is broken for blocking commands -> no newline maybe
+
+output should be:
+showard@f0r5s11:~/Incomplete Projects/minishell_exe$ cat
+^C
+showard@f0r5s11:~/Incomplete Projects/minishell_exe$ 
+
+minishell does:
+minishell> cat (CTRL-C) 
+^Cminishell> 
