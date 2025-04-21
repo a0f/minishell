@@ -1,0 +1,25 @@
+heredoc 
+when i do cat << "lol" because its wrapped in quotes environments variables shouldn't expaned
+ie. $HOME should be printed as $HOME and not the value of $HOME
+but because we get rid of the quotes i have no way of knowing that it was wrapped in quotes
+
+cat | ls doesnt hang and wait for input. it just sends the ls right away. should we be waiting per command?
+I tried adding a simple waitpid but it hangs the tester on case "env | sort | grep -v SHLVL | grep -v ^_"
+but when I run that command manually myself it works so I have no idea.
+
+tester
+we are passing 119/146 cases now. All the cases we are failing are in execution.
+I know people eval this without passing all of them.
+We need to look through and see if there are obvious ones we should be passing
+
+errors and exiting
+need to go through and replace all the errors with correct error/exit behaviour
+
+norminette
+need to split up functions and split up into more .c files and make it norminette
+
+global variable
+we aren't using our one global variable but people are telling me it is required for one specific signalling thing. I'll find out
+
+evalsheet/subject
+find the evalsheet and go through the subject and make sure it atleast passes those

@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/19 13:03:11 by showard          ###   ########.fr       */
+/*   Updated: 2025/04/21 10:57:13 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -563,7 +563,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 			non_builtin = 1;
 			temp_cmd->pid = state_execve(state, temp_cmd->program,
 					temp_cmd->args, envp);
-			// cat | ls was not waiting for input so i added this. it breaks the tester but works when i run it manually?
+			// cat | ls was not waiting for input so i added this. it hangs the tester but works when I do the testers command manually?
 			// waitpid(temp_cmd->pid, NULL, 0);
 		}
 		if (!temp_cmd->pipe_into)
