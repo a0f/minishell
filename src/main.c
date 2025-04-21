@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 14:19:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 19:16:46 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/21 19:36:00 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	main(int argc, char *argv[], char **envp)
 		free(line);
 		if (!parser_line)
 			state_exit(state, 1);
-		state_run_string(state, parser_line);  // leak
+		state_run_string(state, parser_line);
 		(pool_reset(state->parser_pool), pool_reset(state->program_pool));
 	}
 	return (0);
