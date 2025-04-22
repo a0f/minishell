@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 16:11:37 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:13:05 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ char	*find_valid_path(char **paths, char *cmd)
 	return (ft_strdup(cmd));
 }
 
-void	close_fds(t_state *state)
+void	close_fds(void)
 {
 	DIR				*fd_directory;
 	struct dirent	*read_val;
@@ -187,7 +187,7 @@ void	close_fds(t_state *state)
 
 	fd_directory = opendir("/proc/self/fd");
 	if (fd_directory == NULL)
-		(state_exit(state, 1));
+		return ;
 	opendir_fd = dirfd(fd_directory);
 	read_val = readdir(fd_directory);
 	while (read_val != NULL)
@@ -196,7 +196,7 @@ void	close_fds(t_state *state)
 		if (fd_to_close > 2 && fd_to_close != opendir_fd && fd_to_close < 1024)
 		{
 			if (close(fd_to_close) == -1)
-				(state_exit(state, 1));
+				return ;
 		}
 		read_val = readdir(fd_directory);
 	}
@@ -653,7 +653,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	if (state->last_exit_code == 130)
 		printf("\n");
 	restore_stds(&original_stdin, &original_stdout);
-	close_fds(state);
+	close_fds();
 	while (temp_cmd)
 	{
 		if (temp_cmd->pid != -1 && temp_cmd->run)

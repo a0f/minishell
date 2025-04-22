@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
-/*   Updated: 2025/04/22 16:09:46 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:13:02 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void					exit_ms(t_state *state, char *argv[]);
 int						export(char *argv[], t_state *state);
 t_map					*init_envp(t_state *state, t_map *head, char *envp[]);
 void					write_stderr(char *str);
-void					close_fds(t_state *state);
+void					close_fds(void);
 void					error_func(void);
 void					replace_value(t_state *state, char *value, char *key);
 bool					cmd_append_arg(t_pool *pool, t_cmd *cmd, char *arg);
