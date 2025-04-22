@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 15:33:33 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:33:56 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -586,13 +586,13 @@ void	link_cmd(t_cmd *cmd)
 {
 	if (dup2(cmd->fds[READ_END], STDIN_FILENO) == -1)
 	{
-		fprintf(stderr, "dup2 error\n");
+		write_stderr("dup2 error\n");
 		exit(1);
 	}
 	close(cmd->fds[READ_END]);
 	if (dup2(cmd->fds[WRITE_END], STDOUT_FILENO) == -1)
 	{
-		fprintf(stderr, "dup2 error\n");
+		write_stderr("dup2 error\n");
 		exit(1);
 	}
 	close(cmd->fds[WRITE_END]);
