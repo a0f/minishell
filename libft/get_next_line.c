@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/30 14:18:23 by showard           #+#    #+#             */
-/*   Updated: 2025/04/22 15:24:12 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   get_next_line.c                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/10/30 14:18:23 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/22 15:33:30 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -27,8 +28,6 @@ char	*ft_strcpy_gnl(char *dest, const char *src)
 	dest[i] = '\0';
 	return (dest);
 }
-
-#include <stdio.h>
 
 void	complete_line(char *buffer, char **full_line, int fd)
 {
