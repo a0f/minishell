@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 15:33:56 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/22 15:56:59 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <dirent.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #define READ_END 0
 #define WRITE_END 1
+int		g_signal;
 
 t_state	*state_new(void)
 {
@@ -25,9 +30,7 @@ t_state	*state_new(void)
 
 	state = ft_calloc(1, sizeof(t_state));
 	if (!state)
-	{
 		return (NULL);
-	}
 	state->program_pool = pool_new();
 	if (!state->program_pool)
 	{
@@ -96,8 +99,6 @@ void	state_run_string(t_state *state, char *line)
 	}
 	state_run_cmd(state, cmd);
 }
-
-int	g_signal;
 
 void	sigint_interactive(int sig)
 {
@@ -245,30 +246,30 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 
 	pid = fork();
 	if (pid == -1)
-		exit(EXIT_FAILURE); // add real error
+		exit(EXIT_FAILURE);
 	if (pid == 0)
 	{
+		close_fds();
 		(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
 		path_node = map_find(state->env, match_key_str, "PATH");
 		if (path_node)
 		{
 			paths = ft_split(path_node->value, ':');
 			if (paths == NULL)
-				exit(EXIT_FAILURE); // add real error
+				(state_free(state), exit(EXIT_FAILURE));
 			cmd = find_valid_path(paths, cmd);
 			if (cmd == NULL)
-				exit(EXIT_FAILURE); // add real error
+				(state_free(state), exit(EXIT_FAILURE));
 			if (ft_strchr(cmd, '/') == NULL)
 			{
 				free(cmd);
 				cmd = ft_strdup(args[0]);
 				if (cmd == NULL)
-					exit(EXIT_FAILURE); // add real error
+					(state_free(state), exit(EXIT_FAILURE));
 			}
 		}
-		close_fds();
 		if (cmd == NULL)
-			exit(errno); // add real error
+			(state_free(state), exit(EXIT_FAILURE));
 		check_cmd(cmd);
 		if (execve(cmd, args, envp) == -1)
 			perror("minishell");
@@ -339,10 +340,7 @@ char	**convert_env(t_map *state_env)
 		else
 			env[i] = ft_strdup(current->key);
 		if (env[i] == NULL)
-		{
-			// todo: free everything up until i
-			return (NULL);
-		}
+			return (free_2d(env), NULL);
 		i++;
 		current = current->next;
 	}
@@ -373,10 +371,7 @@ int	find_builtin(t_state *state, t_cmd *cmd)
 {
 	state->last_exit_code = 0;
 	if (ft_strcmp(cmd->program, "echo") == 0)
-	{
-		// fprintf(stderr, "Echoing to %d\n", cmd->fds[1]);
 		echo(state, &cmd->args[1]);
-	}
 	else if (ft_strcmp(cmd->program, "cd") == 0)
 		cd(state, &cmd->args[1]);
 	else if (ft_strcmp(cmd->program, "pwd") == 0)
@@ -415,12 +410,6 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 	}
 }
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 {
 	int			lim_len;
@@ -428,7 +417,6 @@ bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 	int			len;
 	t_tokens	*tokens;
 
-	// t_cmd		*cmd;
 	lim_len = ft_strlen(delimeter);
 	g_signal = -2;
 	while (true)
@@ -463,7 +451,6 @@ bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 		}
 		free(gnl_r);
 	}
-	// put file pointer back at start to read
 	lseek(fd, 0, SEEK_SET);
 	return (true);
 }
@@ -484,11 +471,9 @@ bool	process_infile(t_state *state, t_cmd *cmd)
 				perror("open infile");
 				return (false);
 			}
-			if (!input_heredoc(state, temp_in_file->value.s_heredoc.delimeter, fd,
-				temp_in_file->value.s_heredoc.expand))
+			if (!input_heredoc(state, temp_in_file->value.s_heredoc.delimeter,
+					fd, temp_in_file->value.s_heredoc.expand))
 				return (false);
-			// implement this check that bash does
-			// bash: warning: here-document at line 70 delimited by end-of-file (wanted `delimiter')
 		}
 		else
 		{
@@ -617,7 +602,9 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	{
 		non_builtin = 0;
 		link_cmd(temp_cmd);
-		envp = convert_env(state->env); // todo: null check return value
+		envp = convert_env(state->env);
+		if (envp == NULL)
+			(state_free(state), exit(1));
 		if (is_builtin(temp_cmd))
 		{
 			i = 0;
