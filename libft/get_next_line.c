@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   get_next_line.c                                    :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.42.fr>              +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/10/30 14:18:23 by showard       #+#    #+#                 */
-/*   Updated: 2025/03/27 14:35:48 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/30 14:18:23 by showard           #+#    #+#             */
+/*   Updated: 2025/04/22 15:24:12 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ char	*ft_strcpy_gnl(char *dest, const char *src)
 	dest[i] = '\0';
 	return (dest);
 }
+
+#include <stdio.h>
 
 void	complete_line(char *buffer, char **full_line, int fd)
 {

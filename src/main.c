@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 14:19:42 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 19:36:00 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:28:31 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,27 @@ int	main(int argc, char *argv[], char **envp)
 	(void)argc;
 	(void)argv;
 	signal(SIGQUIT, SIG_IGN);
+	g_signal = -1;
 	state = state_new();
 	if (!state)
 		return (1);
 	state->env = init_envp(state, state->env, envp);
 	while (true)
 	{
+		struct sigaction act;
+		sigemptyset(&act.sa_mask);
+		act.sa_flags = 0;
+		act.sa_handler = sigint_interactive;
+		sigaction(SIGINT, &act, NULL);
 		line = readline("minishell> ");
 		if (line == NULL)
 			state_exit(state, 1);
+		if (g_signal != -1)
+		{
+			if (g_signal == SIGINT)
+				state->last_exit_code = 130;
+			g_signal = -1;
+		}
 		add_history(line);
 		parser_line = pool_strdup(state->parser_pool, line);
 		free(line);

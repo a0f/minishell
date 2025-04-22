@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 19:35:45 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:30:27 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,14 +97,23 @@ void	state_run_string(t_state *state, char *line)
 	state_run_cmd(state, cmd);
 }
 
+int	g_signal;
+
 void	sigint_interactive(int sig)
 {
+	bool	was_in_heredoc;
+
+	was_in_heredoc = g_signal == -2;
+	g_signal = sig;
 	if (sig == SIGINT)
 	{
 		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		if (!was_in_heredoc)
+		{
+			rl_on_new_line();
+			rl_replace_line("", 0);
+			rl_redisplay();
+		}
 	}
 }
 
@@ -393,7 +402,7 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 #include <string.h>
 #include <unistd.h>
 
-void	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
+bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 {
 	int			lim_len;
 	char		*gnl_r;
@@ -402,7 +411,8 @@ void	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 
 	// t_cmd		*cmd;
 	lim_len = ft_strlen(delimeter);
-	while (1)
+	g_signal = -2;
+	while (true)
 	{
 		write(1, "> ", 2);
 		gnl_r = get_next_line(0);
@@ -410,13 +420,15 @@ void	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 				&& ft_strlen(delimeter) == ft_strlen(gnl_r) - 1))
 		{
 			free(gnl_r);
+			if (g_signal == 2)
+				return (false);
 			break ;
 		}
 		tokens = tokenize(state, gnl_r, true, expand);
 		if (!tokens)
 		{
 			free(gnl_r);
-			return ;
+			return (false);
 		}
 		while (tokens)
 		{
@@ -434,6 +446,7 @@ void	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 	}
 	// put file pointer back at start to read
 	lseek(fd, 0, SEEK_SET);
+	return (true);
 }
 
 bool	process_infile(t_state *state, t_cmd *cmd)
@@ -452,8 +465,9 @@ bool	process_infile(t_state *state, t_cmd *cmd)
 				perror("open infile");
 				return (false);
 			}
-			input_heredoc(state, temp_in_file->value.s_heredoc.delimeter, fd,
-				temp_in_file->value.s_heredoc.expand);
+			if (!input_heredoc(state, temp_in_file->value.s_heredoc.delimeter, fd,
+				temp_in_file->value.s_heredoc.expand))
+				return (false);
 			// implement this check that bash does
 			// bash: warning: here-document at line 70 delimited by end-of-file (wanted `delimiter')
 		}
@@ -623,10 +637,16 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 		temp_cmd = temp_cmd->pipe_into;
 	}
 	if (!temp_cmd->run)
+	{
 		state->last_exit_code = 1;
+	}
 	else if (non_builtin == 1)
+	{
 		state->last_exit_code = get_exit_status(temp_cmd->pid);
+	}
 	temp_cmd = cmd;
+	if (state->last_exit_code == 130)
+		printf("\n");
 	restore_stds(&original_stdin, &original_stdout);
 	close_fds();
 	while (temp_cmd)
@@ -637,5 +657,4 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 		}
 		temp_cmd = temp_cmd->pipe_into;
 	}
-	signal(SIGINT, sigint_interactive);
 }

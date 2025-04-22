@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 19:13:44 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:54:38 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # include "state.h"
 
 typedef struct s_state	t_state;
+
+extern int				g_signal;
 
 void					*list_find(bool (*f)(void *));
 void					print_lst(t_list *lst);
@@ -77,5 +79,6 @@ bool					sb_append_int(t_sb *sb, int n);
 t_tokens				*tokens_new(t_pool *pool, t_token_type type);
 char					*tokenize_single(t_pool *pool, t_tokens **tokens,
 							char *cmd);
+void					sigint_interactive(int sig);
 
 #endif // MINISHELL_H

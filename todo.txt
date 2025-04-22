@@ -7,29 +7,7 @@ else let it fall through -> set status code tho
 norminette
 need to split up functions and split up into more .c files and make it norminette
 
-global variable
-we aren't using our one global variable but people are telling me it is required for one specific signalling thing. I'll find out
-
 evalsheet/subject
 find the evalsheet and go through the subject and make sure it atleast passes those
 
-CTRL-C only works properly if you run a command then do it
-else it kills with SIGINT
-
-
-CTRL-C is broken for blocking commands -> no newline maybe
-
-output should be:
-showard@f0r5s11:~/Incomplete Projects/minishell_exe$ cat
-^C
-showard@f0r5s11:~/Incomplete Projects/minishell_exe$ 
-
-minishell does:
-minishell> cat (CTRL-C) 
-^Cminishell> 
-
 make sure all exits call state_free
-
-make sure all allocations use a pool
-
-make sure to reset pools regularly
