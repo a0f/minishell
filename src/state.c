@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 15:30:27 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 15:33:33 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,14 +208,33 @@ void	check_cmd(char *cmd)
 	struct stat	buffer;
 
 	if (!ft_strchr(cmd, '/'))
-		fprintf(stderr, "minishell: %s: command not found\n", cmd), exit(127);
+	{
+		write_stderr("minishell: ");
+		write_stderr(cmd);
+		write_stderr(": command not found\n");
+		exit(127);
+	}
 	if (stat(cmd, &buffer) == -1 && errno == ENOENT)
-		fprintf(stderr, "minishell: %s: No such file or directory\n", cmd),
-			exit(127);
+	{
+		write_stderr("minishell: ");
+		write_stderr(cmd);
+		write_stderr(": No such file or directory\n");
+		exit(127);
+	}
 	if (S_ISDIR(buffer.st_mode))
-		fprintf(stderr, "minishell: %s: Is a directory\n", cmd), exit(126);
+	{
+		write_stderr("minishell: ");
+		write_stderr(cmd);
+		write_stderr(": Is a directory\n");
+		exit(126);
+	}
 	if (access(cmd, X_OK) == -1)
-		fprintf(stderr, "minishell: %s: Permission denied\n", cmd), exit(126);
+	{
+		write_stderr("minishell: ");
+		write_stderr(cmd);
+		write_stderr(": Permission denied\n");
+		exit(126);
+	}
 }
 
 pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
