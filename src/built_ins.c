@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   built_ins.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 18:17:10 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   built_ins.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/22 17:52:37 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "state.h"
-
-void	error_func(void)
-{
-	printf("handle errors later lol\n");
-}
 
 void	echo(t_state *state, char *args[])
 {

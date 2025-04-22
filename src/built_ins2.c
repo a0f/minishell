@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   built_ins2.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 14:10:02 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 18:45:14 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   built_ins2.c                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/22 17:52:23 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,6 @@ void	cd(t_state *state, char *path[])
 	pwd_node = map_find(state->env, match_key_str, "PWD");
 	buffer = ft_calloc(PATH_MAX + 1, sizeof(char));
 	if (buffer == NULL)
-		error_func();
+		state_exit(state, 1);
 	pwd_node->value = getcwd(buffer, PATH_MAX);
 }

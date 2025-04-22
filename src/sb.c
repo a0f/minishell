@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   sb.c                                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:14:29 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 17:13:11 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   sb.c                                               :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:14:29 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/22 18:02:00 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ bool	sb_append(t_sb *sb, const char *str)
 {
 	size_t	len;
 
-	len = strlen(str);
+	len = ft_strlen(str);
 	sb->capacity += len;
 	sb->data = pool_realloc(sb->pool, sb->data, sb->count, sb->capacity);
 	if (!sb->data)

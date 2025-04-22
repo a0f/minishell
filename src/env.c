@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 13:24:48 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 18:28:49 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   env.c                                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/22 13:24:48 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/22 17:56:15 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	print_map_export(t_map *lst)
 	current = lst;
 	while (current != NULL)
 	{
-		printf("declare -x ");
+		printf("export ");
 		if (current->value == NULL)
 			printf("%s\n", (char *)current->key);
 		else

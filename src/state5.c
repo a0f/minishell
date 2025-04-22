@@ -6,14 +6,14 @@
 /*   By: showard <showard@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/04/22 17:08:47 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 17:20:51 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/22 18:18:49 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
 #include <fcntl.h>
+#include <minishell.h>
 
-bool	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
+int	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
 {
 	char		*gnl_r;
 	int			len;
@@ -23,12 +23,12 @@ bool	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
 	write(1, "> ", 2);
 	res = heredoc_getline(&gnl_r, delimeter, ft_strlen(delimeter));
 	if (res == -1)
-		return (false);
+		return (-1);
 	if (res == 1)
-		return (true);
+		return (1);
 	tokens = tokenize(state, gnl_r, true, expand);
 	if (!tokens)
-		return (free(gnl_r), false);
+		return (free(gnl_r), -1);
 	while (tokens)
 	{
 		len = ft_strlen(tokens->value);
@@ -39,18 +39,24 @@ bool	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
 		tokens = tokens->next;
 	}
 	free(gnl_r);
-	return (true);
+	return (0);
 }
 
-bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
+bool	input_heredoc(t_state *state, char *delimeter, int *fd, bool expand)
 {
+	int	heredoc_check;
+
 	g_signal = -2;
 	while (true)
 	{
-		if (!heredoc_loop(state, expand, fd, delimeter))
+		heredoc_check = heredoc_loop(state, expand, *fd, delimeter);
+		if (heredoc_check == -1)
 			return (false);
+		else if (heredoc_check == 1)
+			break ;
 	}
-	lseek(fd, 0, SEEK_SET);
+	close(*fd);
+	*fd = open("/tmp/tmp_heredoc", O_CREAT | O_RDWR, 0744);
 	return (true);
 }
 
@@ -68,7 +74,7 @@ bool	process_infile(t_state *state, t_cmd *cmd)
 			if (fd == -1)
 				return (perror("open infile"), false);
 			if (!input_heredoc(state, temp_in_file->value.s_heredoc.delimeter,
-					fd, temp_in_file->value.s_heredoc.expand))
+					&fd, temp_in_file->value.s_heredoc.expand))
 				return (false);
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 15:13:14 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 17:37:53 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/22 18:17:06 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int						export(char *argv[], t_state *state);
 t_map					*init_envp(t_state *state, t_map *head, char *envp[]);
 void					write_stderr(char *str);
 void					close_fds(void);
-void					error_func(void);
 void					replace_value(t_state *state, char *value, char *key);
 bool					cmd_append_arg(t_pool *pool, t_cmd *cmd, char *arg);
 t_input_file			*cmd_append_in_file(t_pool *pool, t_cmd *cmd);
@@ -106,9 +105,9 @@ int						find_builtin(t_state *state, t_cmd *cmd);
 void					create_cmd_pipes(t_state *state, t_cmd *cmd);
 int						heredoc_getline(char **gnl_r, char *delimeter,
 							int lim_len);
-bool					heredoc_loop(t_state *state, bool expand, int fd,
+int						heredoc_loop(t_state *state, bool expand, int fd,
 							char *delimeter);
-bool					input_heredoc(t_state *state, char *delimeter, int fd,
+bool					input_heredoc(t_state *state, char *delimeter, int *fd,
 							bool expand);
 bool					process_infile(t_state *state, t_cmd *cmd);
 bool					process_outfile(t_cmd *cmd);
