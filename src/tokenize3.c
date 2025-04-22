@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenize3.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 16:07:55 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   tokenize3.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/22 17:35:41 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,16 +118,7 @@ t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 			return (NULL);
 		return (tokens);
 	}
-	while (*cmd)
-	{
-		while (*cmd == ' ')
-			cmd++;
-		if (*cmd)
-		{
-			cmd = tokenize_single(state->parser_pool, &tokens, cmd);
-			if (!cmd)
-				return (NULL);
-		}
-	}
+	if (run_tokenizer(state, &tokens, cmd) == 1)
+		return (NULL);
 	return (merge_tokens(state, tokens));
 }

@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/21 15:13:14 by showard           #+#    #+#             */
-/*   Updated: 2025/04/22 16:13:02 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   minishell.h                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/01/21 15:13:14 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/22 17:37:53 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+# define READ_END 0
+# define WRITE_END 1
 
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -80,5 +82,43 @@ t_tokens				*tokens_new(t_pool *pool, t_token_type type);
 char					*tokenize_single(t_pool *pool, t_tokens **tokens,
 							char *cmd);
 void					sigint_interactive(int sig);
-
-#endif // MINISHELL_H
+t_state					*state_new(void);
+void					state_free(t_state *state);
+void					state_exit(t_state *state, int code);
+void					state_run_string(t_state *state, char *line);
+void					sigint_interactive(int sig);
+int						get_exit_status(pid_t pid);
+char					*path_complete(char const *s1, char const *s2);
+char					*find_valid_path(char **paths, char *cmd);
+void					close_fds(void);
+void					check_cmd(t_state *state, char *cmd);
+void					state_execve_path(t_state *state, char **cmd,
+							char *args[], t_map *path_node);
+void					state_execve_child(t_state *state, char *cmd,
+							char *args[], char *envp[]);
+pid_t					state_execve(t_state *state, char *cmd, char **args,
+							char **envp);
+int						ft_mapsize(t_map *map);
+char					*ft_strjoin_path(char const *s1, char const *s2);
+char					**convert_env(t_map *state_env);
+bool					is_builtin(t_cmd *cmd);
+int						find_builtin(t_state *state, t_cmd *cmd);
+void					create_cmd_pipes(t_state *state, t_cmd *cmd);
+int						heredoc_getline(char **gnl_r, char *delimeter,
+							int lim_len);
+bool					heredoc_loop(t_state *state, bool expand, int fd,
+							char *delimeter);
+bool					input_heredoc(t_state *state, char *delimeter, int fd,
+							bool expand);
+bool					process_infile(t_state *state, t_cmd *cmd);
+bool					process_outfile(t_cmd *cmd);
+void					get_previous_input(t_cmd *prev_cmd, t_cmd *cmd);
+void					put_next_output(t_cmd *cmd);
+bool					set_pipes(t_state *state, t_cmd *cmd);
+void					restore_stds(int *original_stdin, int *original_stdout);
+void					link_cmd(t_state *state, t_cmd *cmd);
+void					init_cmd(t_state *state, t_cmd *cmd, int *og_stdin,
+							int *og_stdout);
+int						run_tokenizer(t_state *state, t_tokens **tokens,
+							char *cmd);
+#endif
