@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/22 15:56:59 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/22 16:07:14 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ char	*find_valid_path(char **paths, char *cmd)
 	return (ft_strdup(cmd));
 }
 
-void	close_fds(void)
+void	close_fds(t_state *state)
 {
 	DIR				*fd_directory;
 	struct dirent	*read_val;
@@ -185,9 +185,8 @@ void	close_fds(void)
 	int				opendir_fd;
 
 	fd_directory = opendir("/proc/self/fd");
-	// set proper error
 	if (fd_directory == NULL)
-		printf("error lol\n");
+		(state_exit(state, 1));
 	opendir_fd = dirfd(fd_directory);
 	read_val = readdir(fd_directory);
 	while (read_val != NULL)
@@ -195,16 +194,15 @@ void	close_fds(void)
 		fd_to_close = ft_atoi(read_val->d_name);
 		if (fd_to_close > 2 && fd_to_close != opendir_fd && fd_to_close < 1024)
 		{
-			// set proper error
 			if (close(fd_to_close) == -1)
-				printf("error lol\n");
+				(state_exit(state, 1));
 		}
 		read_val = readdir(fd_directory);
 	}
 	closedir(fd_directory);
 }
 
-void	check_cmd(char *cmd)
+void	check_cmd(t_state *state, char *cmd)
 {
 	struct stat	buffer;
 
@@ -213,28 +211,28 @@ void	check_cmd(char *cmd)
 		write_stderr("minishell: ");
 		write_stderr(cmd);
 		write_stderr(": command not found\n");
-		exit(127);
+		(state_free(state), exit(127));
 	}
 	if (stat(cmd, &buffer) == -1 && errno == ENOENT)
 	{
 		write_stderr("minishell: ");
 		write_stderr(cmd);
 		write_stderr(": No such file or directory\n");
-		exit(127);
+		(state_free(state), exit(127));
 	}
 	if (S_ISDIR(buffer.st_mode))
 	{
 		write_stderr("minishell: ");
 		write_stderr(cmd);
 		write_stderr(": Is a directory\n");
-		exit(126);
+		(state_free(state), exit(126));
 	}
 	if (access(cmd, X_OK) == -1)
 	{
 		write_stderr("minishell: ");
 		write_stderr(cmd);
 		write_stderr(": Permission denied\n");
-		exit(126);
+		(state_free(state), exit(126));
 	}
 }
 
@@ -246,7 +244,7 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 
 	pid = fork();
 	if (pid == -1)
-		exit(EXIT_FAILURE);
+		(state_free(state), exit(EXIT_FAILURE));
 	if (pid == 0)
 	{
 		close_fds();
@@ -270,7 +268,7 @@ pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 		}
 		if (cmd == NULL)
 			(state_free(state), exit(EXIT_FAILURE));
-		check_cmd(cmd);
+		check_cmd(state, cmd);
 		if (execve(cmd, args, envp) == -1)
 			perror("minishell");
 	}
@@ -445,7 +443,7 @@ bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 				close(fd);
 				perror("write");
 				free(gnl_r);
-				exit(1);
+				(state_free(state), exit(1));
 			}
 			tokens = tokens->next;
 		}
@@ -567,18 +565,18 @@ void	restore_stds(int *original_stdin, int *original_stdout)
 	close(*original_stdin);
 }
 
-void	link_cmd(t_cmd *cmd)
+void	link_cmd(t_state *state, t_cmd *cmd)
 {
 	if (dup2(cmd->fds[READ_END], STDIN_FILENO) == -1)
 	{
 		write_stderr("dup2 error\n");
-		exit(1);
+		(state_free(state), exit(1));
 	}
 	close(cmd->fds[READ_END]);
 	if (dup2(cmd->fds[WRITE_END], STDOUT_FILENO) == -1)
 	{
 		write_stderr("dup2 error\n");
-		exit(1);
+		(state_free(state), exit(1));
 	}
 	close(cmd->fds[WRITE_END]);
 }
@@ -601,7 +599,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	while (temp_cmd)
 	{
 		non_builtin = 0;
-		link_cmd(temp_cmd);
+		link_cmd(state, temp_cmd);
 		envp = convert_env(state->env);
 		if (envp == NULL)
 			(state_free(state), exit(1));
