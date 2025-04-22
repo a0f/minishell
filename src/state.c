@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 16:13:05 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:28:11 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,74 +209,80 @@ void	check_cmd(t_state *state, char *cmd)
 
 	if (!ft_strchr(cmd, '/'))
 	{
-		write_stderr("minishell: ");
-		write_stderr(cmd);
+		(write_stderr("minishell: "), write_stderr(cmd));
 		write_stderr(": command not found\n");
 		(state_free(state), exit(127));
 	}
 	if (stat(cmd, &buffer) == -1 && errno == ENOENT)
 	{
-		write_stderr("minishell: ");
-		write_stderr(cmd);
+		(write_stderr("minishell: "), write_stderr(cmd));
 		write_stderr(": No such file or directory\n");
 		(state_free(state), exit(127));
 	}
 	if (S_ISDIR(buffer.st_mode))
 	{
-		write_stderr("minishell: ");
-		write_stderr(cmd);
-		write_stderr(": Is a directory\n");
-		(state_free(state), exit(126));
+		(write_stderr("minishell: "), write_stderr(cmd));
+		(write_stderr(": Is a directory\n"), state_exit(state, 126));
 	}
 	if (access(cmd, X_OK) == -1)
 	{
-		write_stderr("minishell: ");
-		write_stderr(cmd);
+		(write_stderr("minishell: "), write_stderr(cmd));
 		write_stderr(": Permission denied\n");
 		(state_free(state), exit(126));
 	}
 }
 
+void	state_execve_path(t_state *state, char **cmd,
+		char *args[], t_map *path_node)
+{
+	char	**paths;
+
+	paths = ft_split(path_node->value, ':');
+	if (paths == NULL)
+		(state_free(state), exit(EXIT_FAILURE));
+	*cmd = find_valid_path(paths, *cmd);
+	if (*cmd == NULL)
+		(state_free(state), exit(EXIT_FAILURE));
+	if (ft_strchr(*cmd, '/') == NULL)
+	{
+		free(*cmd);
+		*cmd = ft_strdup(args[0]);
+		if (*cmd == NULL)
+			(state_free(state), exit(EXIT_FAILURE));
+	}
+}
+
+void	state_execve_child(t_state *state, char *cmd,
+		char *args[], char *envp[])
+{
+	t_map	*path_node;
+
+	close_fds();
+	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
+	path_node = map_find(state->env, match_key_str, "PATH");
+	if (path_node)
+		state_execve_path(state, &cmd, args, path_complete);
+	if (cmd == NULL)
+		(state_free(state), exit(EXIT_FAILURE));
+	check_cmd(state, cmd);
+	if (execve(cmd, args, envp) == -1)
+		perror("minishell");
+}
+
 pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
 {
 	pid_t	pid;
-	t_map	*path_node;
-	char	**paths;
 
 	pid = fork();
 	if (pid == -1)
 		(state_free(state), exit(EXIT_FAILURE));
 	if (pid == 0)
-	{
-		close_fds();
-		(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
-		path_node = map_find(state->env, match_key_str, "PATH");
-		if (path_node)
-		{
-			paths = ft_split(path_node->value, ':');
-			if (paths == NULL)
-				(state_free(state), exit(EXIT_FAILURE));
-			cmd = find_valid_path(paths, cmd);
-			if (cmd == NULL)
-				(state_free(state), exit(EXIT_FAILURE));
-			if (ft_strchr(cmd, '/') == NULL)
-			{
-				free(cmd);
-				cmd = ft_strdup(args[0]);
-				if (cmd == NULL)
-					(state_free(state), exit(EXIT_FAILURE));
-			}
-		}
-		if (cmd == NULL)
-			(state_free(state), exit(EXIT_FAILURE));
-		check_cmd(state, cmd);
-		if (execve(cmd, args, envp) == -1)
-			perror("minishell");
-	}
+		state_execve_child(state, cmd, args, envp);
 	else
 		state->running_command = pid;
 	return (pid);
 }
+
 int	ft_mapsize(t_map *map)
 {
 	int	counter;
@@ -409,46 +415,55 @@ void	create_cmd_pipes(t_state *state, t_cmd *cmd)
 	}
 }
 
-bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
+int	heredoc_getline(char **gnl_r, char *delimeter, int lim_len)
 {
-	int			lim_len;
+	*gnl_r = get_next_line(0);
+	if (*gnl_r == NULL || (ft_strncmp(delimeter, *gnl_r, lim_len) == 0
+			&& ft_strlen(delimeter) == ft_strlen(*gnl_r) - 1))
+	{
+		free(*gnl_r);
+		if (g_signal == 2)
+			return (-1);
+		return (1);
+	}
+	return (0);
+}
+
+bool	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
+{
 	char		*gnl_r;
 	int			len;
 	t_tokens	*tokens;
+	int			res;
 
-	lim_len = ft_strlen(delimeter);
+	write(1, "> ", 2);
+	res = heredoc_getline(&gnl_r, delimeter, ft_strlen(delimeter));
+	if (res == -1)
+		return (false);
+	if (res == 1)
+		return (true);
+	tokens = tokenize(state, gnl_r, true, expand);
+	if (!tokens)
+		return (free(gnl_r), false);
+	while (tokens)
+	{
+		len = ft_strlen(tokens->value);
+		if (write(fd, tokens->value, len) == -1)
+		{
+			(free(gnl_r), perror("write"), state_exit(state, 1));
+		}
+		tokens = tokens->next;
+	}
+	free(gnl_r);
+}
+
+bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
+{
 	g_signal = -2;
 	while (true)
 	{
-		write(1, "> ", 2);
-		gnl_r = get_next_line(0);
-		if (gnl_r == NULL || (ft_strncmp(delimeter, gnl_r, lim_len) == 0
-				&& ft_strlen(delimeter) == ft_strlen(gnl_r) - 1))
-		{
-			free(gnl_r);
-			if (g_signal == 2)
-				return (false);
-			break ;
-		}
-		tokens = tokenize(state, gnl_r, true, expand);
-		if (!tokens)
-		{
-			free(gnl_r);
+		if (!heredoc_loop(state, expand, fd, delimeter))
 			return (false);
-		}
-		while (tokens)
-		{
-			len = ft_strlen(tokens->value);
-			if (write(fd, tokens->value, len) == -1)
-			{
-				close(fd);
-				perror("write");
-				free(gnl_r);
-				(state_free(state), exit(1));
-			}
-			tokens = tokens->next;
-		}
-		free(gnl_r);
 	}
 	lseek(fd, 0, SEEK_SET);
 	return (true);
@@ -466,10 +481,7 @@ bool	process_infile(t_state *state, t_cmd *cmd)
 		{
 			fd = open("/tmp/tmp_heredoc", O_CREAT | O_RDWR | O_TRUNC, 0744);
 			if (fd == -1)
-			{
-				perror("open infile");
-				return (false);
-			}
+				return (perror("open infile"), false);
 			if (!input_heredoc(state, temp_in_file->value.s_heredoc.delimeter,
 					fd, temp_in_file->value.s_heredoc.expand))
 				return (false);
@@ -478,12 +490,8 @@ bool	process_infile(t_state *state, t_cmd *cmd)
 		{
 			fd = open(temp_in_file->value.path, O_RDONLY);
 			if (fd == -1)
-			{
-				perror("open infile");
-				return (false);
-			}
+				return (perror("open infile"), false);
 		}
-		close(cmd->fds[READ_END]);
 		cmd->fds[READ_END] = fd;
 		temp_in_file = temp_in_file->next;
 	}
