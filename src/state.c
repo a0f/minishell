@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/22 16:07:14 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/22 16:09:59 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -652,7 +652,7 @@ void	state_run_cmd(t_state *state, t_cmd *cmd)
 	if (state->last_exit_code == 130)
 		printf("\n");
 	restore_stds(&original_stdin, &original_stdout);
-	close_fds();
+	close_fds(state);
 	while (temp_cmd)
 	{
 		if (temp_cmd->pid != -1 && temp_cmd->run)

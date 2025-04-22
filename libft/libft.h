@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/10/08 18:59:56 by showard       #+#    #+#                 */
-/*   Updated: 2025/03/27 14:35:39 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/22 15:36:58 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,10 @@ t_list		*ft_lstnew(void *content);
 void		ft_lstadd_back(t_list **lst, t_list *new);
 void		ft_write(int fd, const void *buffer, size_t count, ssize_t *fcheck);
 int			ft_strcmp(const char *s1, const char *s2);
+char		**free_2d(char **str);
 
 t_map		*ft_mapnew(void *key, void *value);
 t_map		*ft_maplast(t_map *lst);
 void		ft_mapadd_back(t_map **lst, t_map *new);
-// void		ft_mapiter(t_list *lst, void (*f)(void *));
-// void		ft_mapadd_front(t_list **lst, t_list *new);
-// int			ft_mapsize(t_list *lst);
-// t_list		*ft_maplast(t_list *lst);
 
 #endif
