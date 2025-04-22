@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/22 16:37:32 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/22 16:59:20 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,7 +261,7 @@ void	state_execve_child(t_state *state, char *cmd,
 	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
 	path_node = map_find(state->env, match_key_str, "PATH");
 	if (path_node)
-		state_execve_path(state, &cmd, args, path_complete);
+		state_execve_path(state, &cmd, args, path_node);
 	if (cmd == NULL)
 		(state_free(state), exit(EXIT_FAILURE));
 	check_cmd(state, cmd);
@@ -455,6 +455,7 @@ bool	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
 		tokens = tokens->next;
 	}
 	free(gnl_r);
+	return (true);
 }
 
 bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
