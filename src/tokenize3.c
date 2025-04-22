@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 19:37:22 by mwijnsma         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:07:55 by mwijnsma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,9 @@ t_tokens	*tokenize(t_state *state, char *cmd, bool here_doc, bool expand)
 		return (NULL);
 	if (here_doc)
 	{
-		tokens = tokens_new(state->parser_pool, TOKEN_WORD);  // todo: null check return value
+		tokens = tokens_new(state->parser_pool, TOKEN_WORD);
+		if (!tokens)
+			state_exit(state, 1);
 		tokens->value = pool_strdup(state->parser_pool, cmd);
 		if (!tokens->value)
 			return (NULL);
