@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pool.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:18:00 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/02/10 16:10:13 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   pool.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:18:00 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/23 16:10:12 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ void	pool_free(t_pool *pool)
 	i = 0;
 	while (i < pool->count)
 	{
-		free(pool->ptrs[i]);
+		free_null((void **)&pool->ptrs[i]);
 		i++;
 	}
-	free(pool->ptrs);
-	free(pool);
+	free_null((void **)&pool->ptrs);
+	free_null((void **)&pool);
 }
 
 void	pool_reset(t_pool *pool)
@@ -52,7 +52,7 @@ void	pool_reset(t_pool *pool)
 	i = 0;
 	while (i < pool->count)
 	{
-		free(pool->ptrs[i]);
+		free_null((void **)&pool->ptrs[i]);
 		i++;
 	}
 	pool->count = 0;

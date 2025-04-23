@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state3.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/22 17:04:53 by showard           #+#    #+#             */
-/*   Updated: 2025/04/23 11:18:08 by showard          ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state3.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: showard <showard@student.42.fr>              +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/04/22 17:04:53 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/23 16:47:41 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,12 @@ void	state_execve_path(t_state *state, char **cmd, char *args[],
 	paths = ft_split(path_node->value, ':');
 	if (paths == NULL)
 		(state_free(state), exit(EXIT_FAILURE));
-	*cmd = find_valid_path(paths, *cmd);
+	*cmd = find_valid_path(state->static_pool, paths, *cmd);
 	if (*cmd == NULL)
 		(free_2d(paths), state_free(state), exit(EXIT_FAILURE));
 	if (ft_strchr(*cmd, '/') == NULL)
 	{
-		free(*cmd);
-		*cmd = ft_strdup(args[0]);
+		*cmd = pool_strdup(state->static_pool, args[0]);
 		if (*cmd == NULL)
 			(free_2d(paths), state_free(state), exit(EXIT_FAILURE));
 	}
@@ -45,11 +44,11 @@ void	state_execve_child(t_state *state, char *cmd, char *args[],
 		state_execve_path(state, &cmd, args, path_node);
 	if (cmd == NULL)
 		(state_free(state), exit(EXIT_FAILURE));
-	check_cmd(state, cmd);
+	check_cmd(state, (void **)&cmd);
 	if (execve(cmd, args, envp) == -1)
 	{
 		perror("minishell");
-		(free(cmd), state_free(state), exit(EXIT_FAILURE));
+		(state_free(state), exit(EXIT_FAILURE));
 	}
 }
 

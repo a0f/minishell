@@ -1,16 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pool_utils.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:18:00 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 17:43:12 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   pool_utils.c                                       :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:18:00 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/23 16:10:12 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_null(void **ptr)
+{
+	if (*ptr)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
+}
 
 char	*pool_strdup(t_pool *pool, const char *s)
 {

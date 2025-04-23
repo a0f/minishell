@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/04/22 17:08:47 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 18:18:49 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/23 14:16:40 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,48 +42,46 @@ int	heredoc_loop(t_state *state, bool expand, int fd, char *delimeter)
 	return (0);
 }
 
-bool	input_heredoc(t_state *state, char *delimeter, int *fd, bool expand)
+bool	input_heredoc(t_state *state, char *delimeter, int fd, bool expand)
 {
 	int	heredoc_check;
 
 	g_signal = -2;
 	while (true)
 	{
-		heredoc_check = heredoc_loop(state, expand, *fd, delimeter);
+		heredoc_check = heredoc_loop(state, expand, fd, delimeter);
 		if (heredoc_check == -1)
 			return (false);
 		else if (heredoc_check == 1)
 			break ;
 	}
-	close(*fd);
-	*fd = open("/tmp/tmp_heredoc", O_CREAT | O_RDWR, 0744);
 	return (true);
 }
 
 bool	process_infile(t_state *state, t_cmd *cmd)
 {
 	t_input_file	*temp_in_file;
-	int				fd;
+	int				fds[2];
 
 	temp_in_file = cmd->in_files;
 	while (temp_in_file)
 	{
 		if (temp_in_file->type == INPUT_HEREDOC)
 		{
-			fd = open("/tmp/tmp_heredoc", O_CREAT | O_RDWR | O_TRUNC, 0744);
-			if (fd == -1)
+			if (pipe(fds) != 0)
 				return (perror("open infile"), false);
 			if (!input_heredoc(state, temp_in_file->value.s_heredoc.delimeter,
-					&fd, temp_in_file->value.s_heredoc.expand))
+					fds[1], temp_in_file->value.s_heredoc.expand))
 				return (false);
+			close(fds[1]);
 		}
 		else
 		{
-			fd = open(temp_in_file->value.path, O_RDONLY);
-			if (fd == -1)
+			fds[0] = open(temp_in_file->value.path, O_RDONLY);
+			if (fds[0] == -1)
 				return (perror("open infile"), false);
 		}
-		cmd->fds[READ_END] = fd;
+		cmd->fds[READ_END] = fds[0];
 		temp_in_file = temp_in_file->next;
 	}
 	return (true);

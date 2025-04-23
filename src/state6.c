@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state6.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/22 17:11:26 by showard           #+#    #+#             */
-/*   Updated: 2025/04/23 09:52:27 by showard          ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state6.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: showard <showard@student.42.fr>              +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/04/22 17:11:26 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/23 16:10:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,13 @@ void	link_cmd(t_state *state, t_cmd *cmd)
 {
 	if (dup2(cmd->fds[READ_END], STDIN_FILENO) == -1)
 	{
-		write_stderr("dup2 error\n");
+		write_err("dup2 error\n");
 		(state_free(state), exit(1));
 	}
 	close(cmd->fds[READ_END]);
 	if (dup2(cmd->fds[WRITE_END], STDOUT_FILENO) == -1)
 	{
-		write_stderr("dup2 error\n");
+		write_err("dup2 error\n");
 		(state_free(state), exit(1));
 	}
 	close(cmd->fds[WRITE_END]);

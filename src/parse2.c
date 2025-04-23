@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parse2.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:18:37 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/22 15:27:36 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   parse2.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:18:37 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/23 16:10:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ bool	parse_lt(t_pool *pool, t_tokens **tokens, t_cmd *cmd)
 	(*tokens) = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
 	{
-		write_stderr("Expected input file\n");
+		write_err("Expected input file\n");
 		return (false);
 	}
 	in_file->value.path = pool_strdup(pool, (*tokens)->value);
@@ -69,7 +69,7 @@ bool	parse_gt(t_pool *pool, t_tokens **tokens, t_cmd *cmd)
 	(*tokens) = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
 	{
-		write_stderr("Expected output file\n");
+		write_err("Expected output file\n");
 		return (false);
 	}
 	out_file->path = pool_strdup(pool, (*tokens)->value);
@@ -89,7 +89,7 @@ bool	parse_ltlt(t_pool *pool, t_tokens **tokens, t_cmd *cmd)
 	(*tokens) = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
 	{
-		write_stderr("Expected heredoc delimiter\n");
+		write_err("Expected heredoc delimiter\n");
 		return (false);
 	}
 	in_file->value.s_heredoc.delimeter = pool_strdup(pool,
@@ -111,7 +111,7 @@ bool	parse_gtgt(t_pool *pool, t_tokens **tokens, t_cmd *cmd)
 	(*tokens) = (*tokens)->next;
 	if (!(*tokens) || (*tokens)->type != TOKEN_WORD)
 	{
-		write_stderr("Expected output file\n");
+		write_err("Expected output file\n");
 		return (false);
 	}
 	out_file->path = pool_strdup(pool, (*tokens)->value);

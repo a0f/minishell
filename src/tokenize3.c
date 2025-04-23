@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/22 17:35:41 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/23 16:10:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	*preprocess(t_state *state, char *cmd, bool in_heredoc, bool expand)
 		preprocess_loop(&args);
 	if (args.in_single || args.in_double)
 	{
-		write_stderr("Unmatched quote\n");
+		write_err("Unmatched quote\n");
 		return (NULL);
 	}
 	return (args.out->data);

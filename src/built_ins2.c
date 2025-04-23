@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 17:52:23 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/23 19:07:17 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ void	exit_ms(t_state *state, char *argv[])
 	{
 		if (!ft_isdigit(argv[1][i - 1]))
 		{
-			(write_stderr("exit\nminishell: exit: "), write_stderr(argv[1]));
-			write_stderr(": numeric argument required\n");
+			(write_err("exit\nminishell: exit: "), write_err(argv[1]));
+			write_err(": numeric argument required\n");
 			(state_free(state), exit(2));
 		}
 	}
 	if (argv[2] != NULL)
 	{
-		write_stderr("exit\nminishell: exit: too many arguments\n");
+		write_err("exit\nminishell: exit: too many arguments\n");
 		state->last_exit_code = 1;
 		return ;
 	}
@@ -56,6 +56,11 @@ void	exit_ms(t_state *state, char *argv[])
 void	cd_home(t_state *state, t_map **pwd_node)
 {
 	*pwd_node = map_find(state->env, match_key_str, "HOME");
+	if (!*pwd_node || !(*pwd_node)->value)
+	{
+		write_err("minishell: cd: HOME not set\n");
+		return ;
+	}
 	chdir((*pwd_node)->value);
 }
 
@@ -63,7 +68,7 @@ bool	cd_path(t_state *state, char *path[])
 {
 	if (path[1] != NULL)
 	{
-		write_stderr("minishell: cd: too many arguments\n");
+		write_err("minishell: cd: too many arguments\n");
 		state->last_exit_code = 1;
 		return (false);
 	}
@@ -88,8 +93,15 @@ void	cd(t_state *state, char *path[])
 			return ;
 	}
 	pwd_node = map_find(state->env, match_key_str, "PWD");
-	buffer = ft_calloc(PATH_MAX + 1, sizeof(char));
+	buffer = pool_calloc(state->static_pool, PATH_MAX + 1);
 	if (buffer == NULL)
 		state_exit(state, 1);
+	if (!pwd_node)
+	{
+		pwd_node = ft_mapnew("PWD", NULL);
+		if (!pwd_node)
+			state_exit(state, 1);
+		ft_mapadd_back(&state->env, pwd_node);
+	}
 	pwd_node->value = getcwd(buffer, PATH_MAX);
 }

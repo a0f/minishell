@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 14:10:02 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 17:52:37 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/23 19:07:55 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,11 @@ void	echo(t_state *state, char *args[])
 
 void	pwd(t_state *state)
 {
-	t_map	*pwd_node;
+	char	buffer[PATH_MAX + 1];
 
+	(void)state;
 	signal(SIGPIPE, SIG_IGN);
-	pwd_node = map_find(state->env, match_key_str, "PWD");
-	printf("%s\n", pwd_node->value);
+	printf("%s\n", getcwd(buffer, PATH_MAX));
 	signal(SIGPIPE, SIG_DFL);
 }
 

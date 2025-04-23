@@ -6,13 +6,13 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 14:19:42 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/22 17:44:42 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/23 16:10:29 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	write_stderr(char *str)
+void	write_err(char *str)
 {
 	write(STDERR_FILENO, str, ft_strlen(str));
 }

@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 15:13:14 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 18:17:06 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/23 16:14:43 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void					unset(t_state *state, char *key);
 void					exit_ms(t_state *state, char *argv[]);
 int						export(char *argv[], t_state *state);
 t_map					*init_envp(t_state *state, t_map *head, char *envp[]);
-void					write_stderr(char *str);
+void					write_err(char *str);
 void					close_fds(void);
 void					replace_value(t_state *state, char *value, char *key);
 bool					cmd_append_arg(t_pool *pool, t_cmd *cmd, char *arg);
@@ -87,10 +87,11 @@ void					state_exit(t_state *state, int code);
 void					state_run_string(t_state *state, char *line);
 void					sigint_interactive(int sig);
 int						get_exit_status(pid_t pid);
-char					*path_complete(char const *s1, char const *s2);
-char					*find_valid_path(char **paths, char *cmd);
+char					*path_complete(t_pool *pool, char const *s1,
+							char const *s2);
+char					*find_valid_path(t_pool *pool, char **paths, char *cmd);
 void					close_fds(void);
-void					check_cmd(t_state *state, char *cmd);
+void					check_cmd(t_state *state, void **cmd);
 void					state_execve_path(t_state *state, char **cmd,
 							char *args[], t_map *path_node);
 void					state_execve_child(t_state *state, char *cmd,
@@ -107,7 +108,7 @@ int						heredoc_getline(char **gnl_r, char *delimeter,
 							int lim_len);
 int						heredoc_loop(t_state *state, bool expand, int fd,
 							char *delimeter);
-bool					input_heredoc(t_state *state, char *delimeter, int *fd,
+bool					input_heredoc(t_state *state, char *delimeter, int fd,
 							bool expand);
 bool					process_infile(t_state *state, t_cmd *cmd);
 bool					process_outfile(t_cmd *cmd);
@@ -120,4 +121,6 @@ void					init_cmd(t_state *state, t_cmd *cmd, int *og_stdin,
 							int *og_stdout);
 int						run_tokenizer(t_state *state, t_tokens **tokens,
 							char *cmd);
+void					free_null(void **ptr);
+
 #endif

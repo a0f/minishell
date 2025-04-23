@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state2.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/22 17:03:06 by showard           #+#    #+#             */
-/*   Updated: 2025/04/23 11:17:52 by showard          ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state2.c                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: showard <showard@student.42.fr>              +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/04/22 17:03:06 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/23 16:24:22 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@
 #include <string.h>
 #include <unistd.h>
 
-char	*path_complete(char const *s1, char const *s2)
+char	*path_complete(t_pool *pool, char const *s1, char const *s2)
 {
 	int		total_len;
 	char	*str;
 	int		i;
 
 	total_len = ft_strlen(s1) + ft_strlen(s2) + 1;
-	str = (char *)malloc((total_len + 1) * sizeof(char));
+	str = (char *)pool_calloc(pool, (total_len + 1) * sizeof(char));
 	if (str == NULL)
 		return (NULL);
 	i = 0;
@@ -50,7 +50,7 @@ char	*path_complete(char const *s1, char const *s2)
 	return (str);
 }
 
-char	*find_valid_path(char **paths, char *cmd)
+char	*find_valid_path(t_pool *pool, char **paths, char *cmd)
 {
 	int		i;
 	char	*temp;
@@ -58,15 +58,14 @@ char	*find_valid_path(char **paths, char *cmd)
 	i = 0;
 	while (paths[i] != NULL)
 	{
-		temp = path_complete(paths[i], cmd);
+		temp = path_complete(pool, paths[i], cmd);
 		if (temp == NULL)
 			return (NULL);
 		if (access(temp, X_OK) == 0)
 			return (temp);
-		free(temp);
 		i++;
 	}
-	return (ft_strdup(cmd));
+	return (pool_strdup(pool, cmd));
 }
 
 void	close_count(int count, int *fds_to_close)
@@ -106,31 +105,31 @@ void	close_fds(void)
 	close_count(count, fds_to_close);
 }
 
-void	check_cmd(t_state *state, char *cmd)
+void	check_cmd(t_state *state, void **cmd)
 {
 	struct stat	buffer;
 
-	if (!ft_strchr(cmd, '/'))
+	if (!ft_strchr(*(char **)cmd, '/'))
 	{
-		(write_stderr("minishell: "), write_stderr(cmd));
-		write_stderr(": command not found\n");
-		(free(cmd), state_free(state), exit(127));
+		(write_err("minishell: "), write_err(*(char **)cmd));
+		write_err(": command not found\n");
+		(state_free(state), exit(127));
 	}
-	if (stat(cmd, &buffer) == -1 && errno == ENOENT)
+	if (stat(*(char **)cmd, &buffer) == -1 && errno == ENOENT)
 	{
-		(write_stderr("minishell: "), write_stderr(cmd));
-		write_stderr(": No such file or directory\n");
-		(free(cmd), state_free(state), exit(127));
+		(write_err("minishell: "), write_err(*(char **)cmd));
+		write_err(": No such file or directory\n");
+		(state_free(state), exit(127));
 	}
 	if (S_ISDIR(buffer.st_mode))
 	{
-		(write_stderr("minishell: "), write_stderr(cmd));
-		(write_stderr(": Is a directory\n"), free(cmd), state_exit(state, 126));
+		(write_err("minishell: "), write_err(*(char **)cmd));
+		(write_err(": Is a directory\n"), state_exit(state, 126));
 	}
-	if (access(cmd, X_OK) == -1)
+	if (access(*(char **)cmd, X_OK) == -1)
 	{
-		(write_stderr("minishell: "), write_stderr(cmd));
-		write_stderr(": Permission denied\n");
-		(state_free(state), free(cmd), exit(126));
+		(write_err("minishell: "), write_err(*(char **)cmd));
+		write_err(": Permission denied\n");
+		(state_free(state), exit(126));
 	}
 }

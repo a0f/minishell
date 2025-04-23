@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   env2.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 13:24:48 by showard           #+#    #+#             */
-/*   Updated: 2025/04/21 18:18:51 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   env2.c                                             :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/22 13:24:48 by showard       #+#    #+#                 */
+/*   Updated: 2025/04/23 19:09:18 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,22 @@ int	check_valid_identifier(char *arg)
 	i = 0;
 	if (arg[0] == '\0')
 	{
-		(write_stderr("minishell: export: '"), write_stderr(arg));
-		write_stderr("': not a valid identifier\n");
+		(write_err("minishell: export: '"), write_err(arg));
+		write_err("': not a valid identifier\n");
 		return (1);
 	}
 	if (ft_isalpha(arg[0]) == 0 && arg[0] != '_')
 	{
-		(write_stderr("minishell: export: '"), write_stderr(arg));
-		write_stderr("': not a valid identifier\n");
+		(write_err("minishell: export: '"), write_err(arg));
+		write_err("': not a valid identifier\n");
 		return (1);
 	}
 	while (arg[i++])
 	{
 		if ((!ft_isalnum(arg[i - 1]) && arg[i - 1] != '_' && arg[i - 1] != '='))
 		{
-			(write_stderr("minishell: export: '"), write_stderr(arg));
-			write_stderr("': not a valid identifier\n");
+			(write_err("minishell: export: '"), write_err(arg));
+			write_err("': not a valid identifier\n");
 			return (1);
 		}
 	}
@@ -83,7 +83,7 @@ int	export(char *argv[], t_state *state)
 		}
 		if (map_find(state->env, match_key_str, key) && ft_strchr(argv[i], '='))
 			replace_value(state, ft_strchr(argv[i], '=') + 1, key);
-		else
+		else if (!map_find(state->env, match_key_str, key))
 			add_key(state, ft_strchr(argv[i], '='), key);
 		i++;
 	}
