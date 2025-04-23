@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:03:06 by showard           #+#    #+#             */
-/*   Updated: 2025/04/23 10:18:42 by showard          ###   ########.fr       */
+/*   Updated: 2025/04/23 11:17:52 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,16 @@ char	*find_valid_path(char **paths, char *cmd)
 	return (ft_strdup(cmd));
 }
 
+void	close_count(int count, int *fds_to_close)
+{
+	while (count > 0)
+	{
+		count--;
+		if (fds_to_close[count] < 1024)
+			close(fds_to_close[count]);
+	}
+}
+
 void	close_fds(void)
 {
 	DIR				*fd_directory;
@@ -86,16 +96,14 @@ void	close_fds(void)
 		read_val = readdir(fd_directory);
 		if (read_val == NULL || count >= 1024)
 			break ;
+		if (!ft_isdigit(read_val->d_name[0]))
+			continue ;
 		current_fd = ft_atoi(read_val->d_name);
 		if (current_fd > 2)
 			fds_to_close[count++] = current_fd;
 	}
 	closedir(fd_directory);
-	while (count > 0)
-	{
-		close(fds_to_close[count - 1]);
-		count--;
-	}
+	close_count(count, fds_to_close);
 }
 
 void	check_cmd(t_state *state, char *cmd)
@@ -106,23 +114,23 @@ void	check_cmd(t_state *state, char *cmd)
 	{
 		(write_stderr("minishell: "), write_stderr(cmd));
 		write_stderr(": command not found\n");
-		(state_free(state), exit(127));
+		(free(cmd), state_free(state), exit(127));
 	}
 	if (stat(cmd, &buffer) == -1 && errno == ENOENT)
 	{
 		(write_stderr("minishell: "), write_stderr(cmd));
 		write_stderr(": No such file or directory\n");
-		(state_free(state), exit(127));
+		(free(cmd), state_free(state), exit(127));
 	}
 	if (S_ISDIR(buffer.st_mode))
 	{
 		(write_stderr("minishell: "), write_stderr(cmd));
-		(write_stderr(": Is a directory\n"), state_exit(state, 126));
+		(write_stderr(": Is a directory\n"), free(cmd), state_exit(state, 126));
 	}
 	if (access(cmd, X_OK) == -1)
 	{
 		(write_stderr("minishell: "), write_stderr(cmd));
 		write_stderr(": Permission denied\n");
-		(state_free(state), exit(126));
+		(state_free(state), free(cmd), exit(126));
 	}
 }

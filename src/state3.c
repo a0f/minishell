@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   state3.c                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/04/22 17:04:53 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 17:20:32 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   state3.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 17:04:53 by showard           #+#    #+#             */
+/*   Updated: 2025/04/23 11:18:08 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,15 @@ void	state_execve_path(t_state *state, char **cmd, char *args[],
 		(state_free(state), exit(EXIT_FAILURE));
 	*cmd = find_valid_path(paths, *cmd);
 	if (*cmd == NULL)
-		(state_free(state), exit(EXIT_FAILURE));
+		(free_2d(paths), state_free(state), exit(EXIT_FAILURE));
 	if (ft_strchr(*cmd, '/') == NULL)
 	{
 		free(*cmd);
 		*cmd = ft_strdup(args[0]);
 		if (*cmd == NULL)
-			(state_free(state), exit(EXIT_FAILURE));
+			(free_2d(paths), state_free(state), exit(EXIT_FAILURE));
 	}
+	free_2d(paths);
 }
 
 void	state_execve_child(t_state *state, char *cmd, char *args[],
@@ -46,7 +47,10 @@ void	state_execve_child(t_state *state, char *cmd, char *args[],
 		(state_free(state), exit(EXIT_FAILURE));
 	check_cmd(state, cmd);
 	if (execve(cmd, args, envp) == -1)
+	{
 		perror("minishell");
+		(free(cmd), state_free(state), exit(EXIT_FAILURE));
+	}
 }
 
 pid_t	state_execve(t_state *state, char *cmd, char **args, char **envp)
