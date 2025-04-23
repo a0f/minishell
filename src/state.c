@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   state.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/22 17:14:57 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   state.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
+/*   Updated: 2025/04/23 09:52:02 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,17 @@
 #include <unistd.h>
 
 int		g_signal;
+
+int	get_exit_status(pid_t pid)
+{
+	int	status;
+
+	wait4(pid, &status, 0, NULL);
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	else
+		return (WEXITSTATUS(status));
+}
 
 void	run_cmd(t_state *state, t_cmd *cmd, int *non_builtin)
 {

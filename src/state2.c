@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   state2.c                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: showard <showard@student.codam.nl>           +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2025/04/22 17:03:06 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/22 17:19:02 by showard       ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   state2.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 17:03:06 by showard           #+#    #+#             */
+/*   Updated: 2025/04/23 10:18:42 by showard          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-int	get_exit_status(pid_t pid)
-{
-	int	status;
-
-	wait4(pid, &status, 0, NULL);
-	if (WIFSIGNALED(status))
-		return (128 + WTERMSIG(status));
-	else
-		return (WEXITSTATUS(status));
-}
 
 char	*path_complete(char const *s1, char const *s2)
 {
@@ -84,25 +73,29 @@ void	close_fds(void)
 {
 	DIR				*fd_directory;
 	struct dirent	*read_val;
-	int				fd_to_close;
-	int				opendir_fd;
+	int				fds_to_close[1024];
+	int				count;
+	int				current_fd;
 
+	count = 0;
 	fd_directory = opendir("/proc/self/fd");
 	if (fd_directory == NULL)
 		return ;
-	opendir_fd = dirfd(fd_directory);
-	read_val = readdir(fd_directory);
-	while (read_val != NULL)
+	while (1)
 	{
-		fd_to_close = ft_atoi(read_val->d_name);
-		if (fd_to_close > 2 && fd_to_close != opendir_fd && fd_to_close < 1024)
-		{
-			if (close(fd_to_close) == -1)
-				return ;
-		}
 		read_val = readdir(fd_directory);
+		if (read_val == NULL || count >= 1024)
+			break ;
+		current_fd = ft_atoi(read_val->d_name);
+		if (current_fd > 2)
+			fds_to_close[count++] = current_fd;
 	}
 	closedir(fd_directory);
+	while (count > 0)
+	{
+		close(fds_to_close[count - 1]);
+		count--;
+	}
 }
 
 void	check_cmd(t_state *state, char *cmd)
