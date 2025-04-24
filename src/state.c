@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   state.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: showard <showard@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:41:34 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/23 09:52:02 by showard          ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   state.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: showard <showard@student.42.fr>              +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 15:41:34 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/24 16:33:07 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,15 @@ void	run_cmd(t_state *state, t_cmd *cmd, int *non_builtin)
 	char	**envp;
 
 	link_cmd(state, cmd);
-	envp = convert_env(state->env);
-	if (envp == NULL)
-		(state_free(state), exit(1));
-	if (is_builtin(cmd))
+	if (cmd->program)
+	{
+		envp = convert_env(state->env);
+		if (envp == NULL)
+			(state_free(state), exit(1));
+	}
+	if (cmd->program && is_builtin(cmd))
 		free_2d(envp);
-	if (cmd->run)
+	if (cmd->run && cmd->program)
 	{
 		if (!find_builtin(state, cmd))
 		{
@@ -54,7 +57,7 @@ void	run_cmd(t_state *state, t_cmd *cmd, int *non_builtin)
 		else
 			cmd->pid = -1;
 	}
-	if (!is_builtin(cmd))
+	if (cmd->program && !is_builtin(cmd))
 		free_2d(envp);
 }
 

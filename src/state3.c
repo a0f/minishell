@@ -6,7 +6,7 @@
 /*   By: showard <showard@student.42.fr>              +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/04/22 17:04:53 by showard       #+#    #+#                 */
-/*   Updated: 2025/04/23 16:47:41 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/24 16:44:00 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	state_execve_child(t_state *state, char *cmd, char *args[],
 	close_fds();
 	(signal(SIGINT, SIG_DFL), signal(SIGQUIT, SIG_DFL));
 	path_node = map_find(state->env, match_key_str, "PATH");
-	if (path_node)
+	if (path_node && cmd[0] != '.' && cmd[1] != '/')
 		state_execve_path(state, &cmd, args, path_node);
 	if (cmd == NULL)
 		(state_free(state), exit(EXIT_FAILURE));

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenize.c                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 17:07:28 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   tokenize.c                                         :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/24 16:38:56 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char	*tokenize_single_quotes(t_pool *pool, t_tokens **tokens, char *cmd)
 	}
 	cmd++;
 	token->value = word->data;
-	token->ended_by_space = *cmd == ' ';
+	token->ended_by_space = (*cmd == ' ' || *cmd == '\t');
 	token->quoted = true;
 	return (cmd);
 }
@@ -101,7 +101,7 @@ char	*tokenize_double_quotes(t_pool *pool, t_tokens **tokens, char *cmd)
 	}
 	cmd++;
 	token->value = word->data;
-	token->ended_by_space = *cmd == ' ';
+	token->ended_by_space = (*cmd == ' ' || *cmd == '\t');
 	token->quoted = true;
 	return (cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
-/*   Updated: 2025/04/23 16:10:29 by showard       ########   odam.nl         */
+/*   Updated: 2025/04/24 16:39:23 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	preprocess_expand(t_state *state, size_t *i, char *cmd, t_sb *out)
 	(*i)++;
 	var_sb = sb_new(state->parser_pool);
 	while (cmd[*i] && cmd[*i] != '\'' && cmd[*i] != '"' && cmd[*i] != ' '
-		&& cmd[*i] != '\n')
+		&& cmd[*i] != '\t' && cmd[*i] != '\n')
 	{
 		sb_append_char(var_sb, cmd[*i]);
 		(*i)++;

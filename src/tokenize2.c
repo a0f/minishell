@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenize2.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mwijnsma <mwijnsma@codam.nl>               +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 16:10:47 by mwijnsma          #+#    #+#             */
-/*   Updated: 2025/04/21 17:07:47 by mwijnsma         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   tokenize2.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mwijnsma <mwijnsma@codam.nl>                 +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2025/02/10 16:10:47 by mwijnsma      #+#    #+#                 */
+/*   Updated: 2025/04/24 16:40:16 by showard       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,23 @@ char	*tokenize_gt(t_pool *pool, t_tokens **tokens, char *cmd)
 	return (cmd);
 }
 
-char	*tokenize_word(t_pool *pool, t_tokens **tokens, char *cmd)
+char	*tokenize_word(t_pool *pool, t_tokens **tokens, char *c)
 {
 	t_tokens	*token;
 	t_sb		*word;
 
 	token = tokens_add(pool, tokens, TOKEN_WORD);
 	word = sb_new(pool);
-	while (*cmd && *cmd != ' ' && *cmd != '|' && *cmd != '\'' && *cmd != '"')
+	while (*c && *c != ' ' && *c != '\t' && *c != '|'
+		&& *c != '\'' && *c != '"')
 	{
-		sb_append_char(word, *cmd);
-		cmd++;
+		sb_append_char(word, *c);
+		c++;
 	}
 	token->value = word->data;
-	token->ended_by_space = *cmd == ' ';
+	token->ended_by_space = (*c == ' ' || *c == '\t');
 	token->quoted = false;
-	return (cmd);
+	return (c);
 }
 
 char	*tokenize_single(t_pool *pool, t_tokens **tokens, char *cmd)
